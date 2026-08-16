@@ -160,7 +160,7 @@ namespace SYS_PATHS {
                           << "/snap/bin"
                           << "snap/local/bin"
                           << "/bin"
-                          << "/home/linuxbrew/.linuxbrew";
+                          << "/home/linuxbrew/.linuxbrew/bin";
             #elif defined(Q_OS_WIN)
                     paths << "C:/Program Files"
                           << "C:/Program Files (x86)"

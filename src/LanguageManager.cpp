@@ -26,7 +26,7 @@ void LanguageManager::setLanguage(const QString& newLanguage) {
     #ifdef Q_OS_MACOS
         const auto translationPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/translations");
     #else
-        const auto translationPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/translations");
+        const auto translationPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/resources/translations");
     #endif
 
     const auto _fileName = _newLanguage + ".qm";

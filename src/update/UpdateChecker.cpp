@@ -73,7 +73,7 @@ void UpdateChecker::helpDoc() {
     #ifdef Q_OS_MACOS
         const auto pdfPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/HelpDoc_v2.pdf");
     #else
-        const auto pdfPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/HelpDoc_v2.pdf");
+        const auto pdfPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/resources/HelpDoc_v2.pdf");
     #endif
 
     APP::messageCenter()->sendDebug(
@@ -145,7 +145,7 @@ QString UpdateChecker::findDownloadUrl(const QJsonArray& assets) {
         keywords << ".exe";
     #elif defined(Q_OS_LINUX)
         keywords << "Linux";
-        keywords << ".AppImage"
+    keywords << ".AppImage";
     #endif
 
     for (const auto& asset : assets) {

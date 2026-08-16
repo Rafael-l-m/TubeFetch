@@ -140,7 +140,7 @@ ApplicationWindow {
 
         onAccepted: {
             b_closingByManager = true
-            backend.quitAppRequest();
+            backend.requestQuitApp();
         }
     }
 

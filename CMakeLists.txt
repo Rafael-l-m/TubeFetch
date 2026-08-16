@@ -140,7 +140,7 @@ target_link_libraries(appYoutubeMediaDownloader
     PRIVATE Qt6::Quick
     PRIVATE Qt6::QuickControls2
     PRIVATE Qt6::QuickDialogs2
-    PRIVATE Qt::Sql
+    PRIVATE Qt6::Sql
 )
 
 install(TARGETS appYoutubeMediaDownloader
