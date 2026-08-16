@@ -275,6 +275,7 @@ QQuickWindow* WindowManager::createWindow(
                 )
         );
 
+        obj->deleteLater();
         return nullptr;
     }
 
@@ -282,7 +283,11 @@ QQuickWindow* WindowManager::createWindow(
     // Window flags
     // ----------------------------------------
 
-    if (staysOnTop) { window->setFlags(window->flags() | Qt::WindowStaysOnTopHint); }
+    #ifdef Q_OS_WIN
+        Q_UNUSED(staysOnTop)
+    #else
+        if (staysOnTop) { window->setFlags(window->flags() | Qt::WindowStaysOnTopHint); }
+    #endif
 
     // ----------------------------------------
     // Modal

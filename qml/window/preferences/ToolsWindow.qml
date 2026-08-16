@@ -15,10 +15,11 @@ ApplicationWindow {
     width: 1000
     height: 450
 
-    minimumWidth: toolsWindow.width
-    minimumHeight: toolsWindow.height
-    maximumWidth: toolsWindow.width
-    maximumHeight: toolsWindow.height
+    minimumWidth: 1000
+    minimumHeight: 450
+
+    maximumWidth: 1000
+    maximumHeight: 450
 
     title: qsTr("Tools Config")
 

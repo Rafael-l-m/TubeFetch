@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDir>
 #include <QMap>
 #include <QSet>
 #include <QUrl>

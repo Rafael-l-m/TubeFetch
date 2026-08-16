@@ -109,18 +109,6 @@ qt_add_qml_module(appYoutubeMediaDownloader
 )
 
 if (APPLE)
-    # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-    # If you are developing for iOS or macOS you should consider setting an
-    # explicit, fixed bundle identifier manually though.
-    set_target_properties(appYoutubeMediaDownloader PROPERTIES
-    #    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appYoutubeMediaDownloader
-        MACOSX_BUNDLE_ICON_FILE AppIcon.icns
-        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-        MACOSX_BUNDLE TRUE
-        WIN32_EXECUTABLE TRUE
-    )
-
     add_custom_command(TARGET appYoutubeMediaDownloader POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_SOURCE_DIR}/resources/AppIcon.icns"
@@ -135,6 +123,18 @@ if (APPLE)
         $<TARGET_BUNDLE_DIR:appYoutubeMediaDownloader>/Contents/Resources/translations
     )
 endif()
+
+# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+# If you are developing for iOS or macOS you should consider setting an
+# explicit, fixed bundle identifier manually though.
+set_target_properties(appYoutubeMediaDownloader PROPERTIES
+#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appYoutubeMediaDownloader
+    MACOSX_BUNDLE_ICON_FILE AppIcon.icns
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
 
 target_link_libraries(appYoutubeMediaDownloader
     PRIVATE Qt6::Quick

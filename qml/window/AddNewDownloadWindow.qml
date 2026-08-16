@@ -15,11 +15,11 @@ ApplicationWindow {
     width: 870
     height: 830
 
-    maximumWidth: window.width
-    minimumWidth: window.width
+    minimumWidth: 870
+    minimumHeight: 830
 
-    maximumHeight: window.height
-    minimumHeight: window.height
+    maximumWidth: 870
+    maximumHeight: 830
 
     Material.theme: Material.Light
     Material.accent: lightMode ? "#0015ff" : "#d81209"
