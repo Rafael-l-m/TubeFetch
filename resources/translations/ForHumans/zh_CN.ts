@@ -487,7 +487,7 @@ Are you sure you want to proceed?</source>
         <location filename="../build/Qt_6_11_1_for_macOS_Debug/YoutubeMediaDownloader/Main.qml" line="24"/>
         <location filename="../Main.qml" line="24"/>
         <source>Youtube Media Downloader (v2.0.0)</source>
-        <translation>Youtube 音视频下载器 (v2.0.0)</translation>
+        <translation>YouTube 音视频下载器 (v2.0.0)</translation>
     </message>
     <message>
         <location filename="../build/Qt_6_11_1_for_macOS_Debug/YoutubeMediaDownloader/Main.qml" line="85"/>
