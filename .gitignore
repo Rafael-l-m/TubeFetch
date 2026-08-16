@@ -1,0 +1,48 @@
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Qt / C++
+build/
+build-*/
+*.pro.user
+*.qbs.user
+*.qmlc
+*.jsc
+*.moc
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+*.app
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# IDEs
+.vscode/
+.idea/
+*.xcworkspace
+*.xcuserdata/
+*.xcuserstate
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
