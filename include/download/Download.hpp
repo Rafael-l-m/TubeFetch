@@ -1,6 +1,7 @@
 #pragma once
 
 #include <download/DownloadStatus.hpp>
+#include <mutex>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMutex>
