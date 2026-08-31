@@ -16,12 +16,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "rafael"
-            VALUE "FileDescription", "Youtube Media Downloader"
-            VALUE "FileVersion", "2.0.0"
-            VALUE "InternalName", "YoutubeMediaDownloader"
-            VALUE "OriginalFilename", "appYoutubeMediaDownloader.exe"
-            VALUE "ProductName", "Youtube Media Downloader"
-            VALUE "ProductVersion", "2.0.0"
+            VALUE "FileDescription", "TubeFetch"
+            VALUE "FileVersion", "2.1.0"
+            VALUE "InternalName", "TubeFetch"
+            VALUE "OriginalFilename", "TubeFetch.exe"
+            VALUE "ProductName", "TubeFetch"
+            VALUE "ProductVersion", "2.1.0"
         END
     END
     BLOCK "VarFileInfo"

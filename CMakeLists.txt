@@ -156,10 +156,6 @@ elseif (WIN32)
         "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.ico"
 
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"
-        "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.png"
-
-        COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v2_1_0.pdf"
         "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc_v2_1_0.pdf"
 
