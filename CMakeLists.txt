@@ -147,14 +147,29 @@ if (APPLE)
 elseif (WIN32)
     set_target_properties(TubeFetch PROPERTIES WIN32_EXECUTABLE TRUE)
 
-    #set_source_files_properties(resources/app.rc PROPERTIES LANGUAGE RC)
-    #target_sources(TubeFetch PRIVATE resources/app.rc)
+    set_source_files_properties(resources/app.rc PROPERTIES LANGUAGE RC)
+    target_sources(TubeFetch PRIVATE resources/app.rc)
 
     add_custom_command(TARGET TubeFetch POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_SOURCE_DIR}/resources/AppIcon.ico"
         "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.ico"
 
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.png"
+
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v2_1_0.pdf"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc_v2_1_0.pdf"
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
+        $<TARGET_FILE_DIR:TubeFetch>/resources/translations
+    )
+
+elseif (LINUX)
+    add_custom_command(TARGET TubeFetch POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"
         "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.png"
