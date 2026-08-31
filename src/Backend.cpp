@@ -928,13 +928,13 @@ void Backend::getUrlInfo(const QString& url) { this->m_urlInfoManager->getInfo(u
 
 // Update Checker
 
-Q_INVOKABLE void Backend::visitRepo()    { UpdateChecker::visitRepo();    }
+void Backend::visitRepo()    { UpdateChecker::visitRepo();    }
 
-Q_INVOKABLE void Backend::helpDoc()      { UpdateChecker::helpDoc();      }
+void Backend::helpDoc()      { UpdateChecker::helpDoc();      }
 
-Q_INVOKABLE void Backend::reportIssues() { UpdateChecker::reportIssues(); }
+void Backend::reportIssues() { UpdateChecker::reportIssues(); }
 
-Q_INVOKABLE void Backend::checkUpdate() const {
+void Backend::checkUpdate() const {
     if (!this->m_updateChecker) {
         APP::messageCenter()->sendError("UpdateChecker is null");
         return;

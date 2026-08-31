@@ -164,7 +164,11 @@ elseif (WIN32)
         $<TARGET_FILE_DIR:TubeFetch>/resources/translations
     )
 
-elseif (LINUX)
+elseif (UNIX)
+    set_target_properties(TubeFetch PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    )
+
     add_custom_command(TARGET TubeFetch POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"

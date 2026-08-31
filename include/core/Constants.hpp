@@ -152,10 +152,17 @@ namespace SYS_CONFIG {
     }
 
     namespace GENERAL_SETTINGS {
-        inline const QString KEY_LIGHTMODE_AUTOMATIC {"general/lightmode/automatic"};
-        inline const QString KEY_LIGHTMODE {"general/lightmode"};
-        inline const QString KEY_SELF_CHECK_WHEN_EXECUTE {"general/self_check"};
-        inline const QString KEY_USE_RATELIMIT {"general/enable_rate_limit"};
+        #ifdef Q_OS_LINUX
+            inline const QString KEY_LIGHTMODE_AUTOMATIC {"General/lightmode/automatic"};
+            inline const QString KEY_LIGHTMODE {"General/lightmode"};
+            inline const QString KEY_SELF_CHECK_WHEN_EXECUTE {"General/self_check"};
+            inline const QString KEY_USE_RATELIMIT {"General/enable_rate_limit"};
+        #else
+            inline const QString KEY_LIGHTMODE_AUTOMATIC {"general/lightmode/automatic"};
+            inline const QString KEY_LIGHTMODE {"general/lightmode"};
+            inline const QString KEY_SELF_CHECK_WHEN_EXECUTE {"general/self_check"};
+            inline const QString KEY_USE_RATELIMIT {"general/enable_rate_limit"};
+        #endif
     }
 
     namespace PAGE_SETTINGS {
@@ -200,22 +207,22 @@ namespace TOOLS {
         const auto appConfigPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         const auto savePath = appConfigPath + QDir::separator() + "yt-dlp";
 
-        #ifdef Q_OS_UNIX
-            return savePath;
-        #elif defined(Q_OS_WIN)
+        #ifdef Q_OS_WIN
             return savePath + ".exe";
         #endif
+
+        return savePath;
     }
 
     inline const QString poTokenProviderPath() {
         const auto appConfigPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         const auto savePath = appConfigPath + QDir::separator() + "bgutil-pot-provider";
 
-        #ifdef Q_OS_MACOS
-            return savePath;
-        #elif defined(Q_OS_WIN)
+        #ifdef Q_OS_WIN
             return savePath + ".exe";
         #endif
+
+        return savePath;
     }
 
     inline const QString poTokenProviderRsPath() {
@@ -232,9 +239,9 @@ namespace TOOLS {
         #elif defined(Q_OS_WIN)
             return {"https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"};
         #elif defined(Q_OS_LINUX)
-            return "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp_linux";
+            return {"https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp_linux"};
         #else
-            return "https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp";
+            return {"https://github.com/yt-dlp/yt-dlp/releases/download/2026.07.04/yt-dlp"};
         #endif
     }
 
