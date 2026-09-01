@@ -164,8 +164,9 @@ void DownloadWorker::start() {
             const auto text = QString::fromUtf8(this->m_process->readAllStandardOutput());
 
             static QRegularExpression re(
-                R"(\[download\]\s+([\d.]+)%\s+of\s+([\d.]+)([KMG]i?B)\s+at\s+([\d.]+)([KMG]i?B/s)\s+ETA\s+([\d:]+))"
+                R"(\[download\]\s+([\d.]+)%\s+of\s+(?:~\s*)?([\d.]+)([KMG]i?B)\s+at\s+([\d.]+)([KMG]i?B/s)\s+ETA\s+([\d:]+))"
             );
+
 
             APP::messageCenter()->sendOutput(QString("Standard output: %1").arg(text));
 
