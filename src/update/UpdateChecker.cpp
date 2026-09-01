@@ -130,7 +130,7 @@ QString UpdateChecker::findDownloadUrl(const QJsonArray& assets) {
     #endif
 
     #if defined(Q_OS_MACOS)
-        keywords << "macOs";
+        keywords << "macOS";
         keywords << ".dmg";
     #elif defined(Q_OS_WIN)
         keywords << "windows";
