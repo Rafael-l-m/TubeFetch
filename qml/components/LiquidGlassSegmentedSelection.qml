@@ -1,5 +1,21 @@
 import QtQuick
 
+/*
+ * Usage:
+ *     enabled: true
+ *     currentIndex: 1
+ *
+ *     Component.onCompleted: {
+ *         append(" ")
+ *         append(" ")
+ *         append(" ")
+ *         append(" ")
+ *     }
+ *
+ *     onClicked: function(index) {}
+ *     onSelectionChanged: function (index, text) {}
+ */
+
 Item {
     readonly property int count: segmentModel.count
 
@@ -18,6 +34,10 @@ Item {
 
     implicitWidth: segmentRow.width + liquidGlassSegmentedSelection.horizontalPadding * 2
     implicitHeight: 58
+
+    opacity: enabled ? 1 : 0.4
+
+    Behavior on opacity { NumberAnimation { duration: 200 } }
 
 
     // ======================

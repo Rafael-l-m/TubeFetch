@@ -1,5 +1,13 @@
 import QtQuick
 
+/*
+ * Usage:
+ *      enabled: true
+ *      checked: false
+ *      text: qsTr(" ")
+ *      onClicked: {}
+ */
+
 Item {
     property string text: ""
     property bool checked: false
@@ -14,6 +22,9 @@ Item {
     implicitHeight: 58
 
     scale: pressed ? 0.96 : (hovered ? 1.02 : 1.0)
+    opacity: enabled ? 1.0 : 0.4
+
+    Behavior on opacity { NumberAnimation { duration: 200 } }
 
     Behavior on scale {
         NumberAnimation {

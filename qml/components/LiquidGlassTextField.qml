@@ -1,6 +1,19 @@
 import QtQuick
 import QtQuick.Controls
 
+/*
+ * Usage:
+ *      text: ""
+ *      placeholderText: ""
+ *      readOnly: true
+ *      echoMode: false
+ *      font.pixelSize: 12
+ *      font.bold: true
+ *
+ *      onTextEdited: function(text) {}
+ *      onAccepted: {}
+ */
+
 Item {
     property alias text: input.text
     property alias placeholderText: input.placeholderText
@@ -12,7 +25,7 @@ Item {
 
     property bool hovered: mouseDetector.containsMouse
     property bool focused: input.activeFocus
-    property bool enabled: true
+    property bool editableState: !readOnly && enabled
 
     signal accepted()
     signal textEdited(string text)
@@ -21,8 +34,6 @@ Item {
 
     implicitWidth: 260
     implicitHeight: 52
-
-    property bool editableState: !readOnly && enabled
 
 
     // ===============
@@ -278,16 +289,6 @@ Item {
 
         selectedTextColor: Qt.white
 
-        cursorDelegate: Rectangle {
-            width: 2
-
-            radius: 1
-
-            color: Qt.rgba(0.75, 0.88, 1.0, 0.9)
-        }
-
-        cursorVisible: !liquidGlassTextField.readOnly && input.activeFocus
-
         font.pixelSize: 16
 
         font.weight: liquidGlassTextField.readOnly ? Font.Medium : Font.Normal
@@ -296,7 +297,22 @@ Item {
 
         onAccepted: liquidGlassTextField.accepted()
 
-        onTextEdited: function() { liquidGlassTextField.textEdited(input.text) }
+        onTextEdited: function() { liquidGlassTextField.textEdited(input.text); unfocusedTimer.restart() }
+
+        onActiveFocusChanged: { if (input.activeFocus) { unfocusedTimer.restart() } }
+
+        onCursorPositionChanged: { unfocusedTimer.restart() }
+
+        Timer {
+            id: unfocusedTimer
+            interval: 1500
+            repeat: false
+
+            onTriggered: {
+                input.focus = false
+                input.text = input.text.trim()
+            }
+        }
     }
 
 

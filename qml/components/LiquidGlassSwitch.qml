@@ -1,5 +1,12 @@
 import QtQuick
 
+/*
+ * Usage:
+ *      enabled: true
+ *      checked: true
+ *      onToggled: function(checked) {}
+ */
+
 Item {
     property bool checked: false
     property bool hovered: mouseArea.containsMouse
@@ -10,9 +17,12 @@ Item {
     id: liquidGlassSwitch
 
     scale: pressed ? 0.97 : 1.0
+    opacity: enabled ? 1.0 : 0.4
 
     implicitWidth: 72
     implicitHeight: 40
+
+    Behavior on opacity { NumberAnimation { duration: 200 } }
 
     Behavior on scale {
         NumberAnimation {

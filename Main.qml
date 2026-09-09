@@ -6,7 +6,7 @@ import "qml/components" as Comp
 ApplicationWindow {
     id: window
     width: 640
-    height: 480
+    height: 880
     minimumWidth: 200
     minimumHeight: 250
     visible: true
@@ -22,22 +22,25 @@ ApplicationWindow {
 
     ColumnLayout {
         anchors.centerIn: parent
-        spacing: 40
+        spacing: 20
 
         Comp.LiquidGlassButton {
+            // enabled: true
             text: qsTr("Test")
             onClicked: { console.log("Button Clicked") }
         }
 
         Comp.LiquidGlassSwitch {
+            // enabled: false
             // checked: true
             onToggled: function(checked) { console.log("Switch changed: ", checked) }
         }
 
         Comp.LiquidGlassTextField {
             // text: "System Generated Id"
-            // placeholderText: "Enter download address ..."
+            placeholderText: "Enter download address ..."
             // readOnly: true
+            // enabled: false
 
             onTextEdited: function(text) { console.log("Text Changed: ", text) }
 
@@ -46,7 +49,7 @@ ApplicationWindow {
 
         Comp.LiquidGlassSegmentedSelection {
             id: segmentedSelection
-
+            // enabled: false
             // currentIndex: 1
 
             Component.onCompleted: {
@@ -59,6 +62,26 @@ ApplicationWindow {
             onClicked: function(index) { console.log("Segmented Selection -> onClicked: ", index) }
 
             onSelectionChanged: function (index, text) { console.log("Segmented Selection -> selectionChanged:", index, text) }
+        }
+
+        Comp.LiquidGlassComboBox {
+            //readOnly: true
+            width: 280
+
+            model: [
+                "English",
+                "Chinese",
+                "Japanese",
+                "Spanish",
+                "E1",
+                "C1",
+                "J1",
+                "S1",
+            ]
+
+            currentIndex: 0
+
+            onActivated: function(index) { console.log("Liquid Glass ComboBox: ", index) }
         }
     }
 
