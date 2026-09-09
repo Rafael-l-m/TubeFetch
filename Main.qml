@@ -1,6 +1,6 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Controls.Basic
 import "qml/components" as Comp
 
 ApplicationWindow {
@@ -18,44 +18,48 @@ ApplicationWindow {
     property color light: "#e0e0e0"
 
 
-    Comp.Background {
-
-    }
+    Comp.Background { }
 
     ColumnLayout {
         anchors.centerIn: parent
         spacing: 40
 
         Comp.LiquidGlassButton {
-
-            onClicked: {
-                console.log("Clicked")
-test.append("Teaa a'teptpeptersasad")
-            }
+            text: qsTr("Test")
+            onClicked: { console.log("Button Clicked") }
         }
 
         Comp.LiquidGlassSwitch {
-
-        }
-    }
-
-    Comp.LiquidGlassSegmentedSelection {
-        id: test
-
-        Component.onCompleted: {
-            append("Home")
-            append("Explore")
-            append("Library")
-            append("Settings")
+            // checked: true
+            onToggled: function(checked) { console.log("Switch changed: ", checked) }
         }
 
-        onSelectionChanged: {
-            console.log(index, text)
+        Comp.LiquidGlassTextField {
+            // text: "System Generated Id"
+            // placeholderText: "Enter download address ..."
+            // readOnly: true
+
+            onTextEdited: function(text) { console.log("Text Changed: ", text) }
+
+            onAccepted: { console.log("Liquid Glass TextField Accepted") }
         }
 
-        /*onCurrentIndexChangedByUser: function(index) {
-            console.log("Selected:", index, currentText)
-        }*/
+        Comp.LiquidGlassSegmentedSelection {
+            id: segmentedSelection
+
+            // currentIndex: 1
+
+            Component.onCompleted: {
+                append("Home")
+                append("Explore")
+                append("Library")
+                append("Settings")
+            }
+
+            onClicked: function(index) { console.log("Segmented Selection -> onClicked: ", index) }
+
+            onSelectionChanged: function (index, text) { console.log("Segmented Selection -> selectionChanged:", index, text) }
+        }
     }
 
     /*GridLayout {

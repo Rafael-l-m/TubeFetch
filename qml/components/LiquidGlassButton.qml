@@ -1,14 +1,14 @@
 import QtQuick
 
 Item {
-    id: liquidGlassButton
-
     property string text: ""
     property bool checked: false
     property bool hovered: mouseArea.containsMouse
     property bool pressed: mouseArea.pressed
 
     signal clicked()
+
+    id: liquidGlassButton
 
     implicitWidth: 180
     implicitHeight: 58
