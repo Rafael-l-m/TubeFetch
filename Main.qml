@@ -81,7 +81,7 @@ ApplicationWindow {
 
             currentIndex: 0
 
-            onActivated: function(index) { console.log("Liquid Glass ComboBox: ", index) }
+            onActivated: function(index) { console.log("Liquid Glass ComboBox: ", index, currentText) }
         }
     }
 

@@ -5,6 +5,7 @@ import QtQuick.Window
 /*
  * Usage:
  *      width: 280
+ *      popupMaxHeight: 300
  *
  *      model: [
  *          " ",
@@ -20,6 +21,7 @@ import QtQuick.Window
  *      or
  *
  *      width: 300
+ *      popupMaxHeight: 300
  *
  *      model: [
  *          { name: " ", code: " " },
@@ -47,7 +49,7 @@ Item {
 
     property real cornerRadius: 14
     property real popupSpacing: 6
-    property real popupMaxHeight: 300
+    property real popupMaxHeight: 200
     property real itemHeight: 42
     property real popupPadding: 5
 
@@ -579,39 +581,6 @@ Item {
                     color: Qt.rgba(0.45, 0.60, 0.85, 0.10)
                 }
             }
-
-
-            // =========================
-            // Popup Top Reflection
-            // =========================
-
-            Rectangle {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    top: parent.top
-
-                    leftMargin: 12
-                    rightMargin: 12
-                    topMargin: 4
-                }
-
-                height: parent.height * 0.12
-
-                radius: height / 2
-
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0
-                        color: Qt.rgba(1, 1, 1, 0.20)
-                    }
-
-                    GradientStop {
-                        position: 1
-                        color: Qt.rgba(1, 1, 1, 0.01)
-                    }
-                }
-            }
         }
 
 
@@ -756,549 +725,286 @@ Item {
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
 
-                // ====================================
-                // Need ......
-                // ====================================
+                width: 5
+
+                background: Rectangle { color: "transparent" }
             }
 
             delegate: Item {
-
                 id: delegateRoot
 
+                width: listView.width
 
-                width:
-                    listView.width
+                height: liquidGlassComboBox.itemHeight
 
-
-                height:
-                    liquidGlassComboBox.itemHeight
-
-
-                property bool itemHovered:
-                    delegateMouse.containsMouse
+                property bool itemHovered: delegateMouse.containsMouse
+                property bool itemSelected: index === liquidGlassComboBox.currentIndex
 
 
-                property bool itemSelected:
-                    index === liquidGlassComboBox.currentIndex
-
-
-                /*
-                 * =================================================
-                 * Selection Liquid Layer
-                 * =================================================
-                 */
+                // ====================
+                // Widget internal
+                // ====================
 
                 Rectangle {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        top: parent.top
 
+                        leftMargin: 8
+                        rightMargin: 8
+                        topMargin: 3
+                    }
+
+                    height: parent.height * 0.36
+                    radius: height / 2
+
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0
+                            color: Qt.rgba(1, 1, 1, 0.16)
+                        }
+
+                        GradientStop {
+                            position: 1
+                            color: Qt.rgba(1, 1, 1, 0.01)
+                        }
+                    }
+
+                    z: -1
+                }
+
+
+                // ====================
+                // Main Popup Body
+                // ====================
+
+                Rectangle {
                     id: selectionBackground
 
+                    anchors.fill: parent
 
-                    anchors.fill:
-                        parent
+                    radius: liquidGlassComboBox.cornerRadius
 
+                    color: delegateRoot.itemSelected
+                                ? Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.16)
+                                : delegateRoot.itemHovered
+                                    ? Qt.rgba(1, 1, 1, 0.09)
+                                    : "transparent"
 
-                    radius:
-                        liquidGlassComboBox.cornerRadius - 4
+                    border.width: delegateRoot.itemSelected ? 1 : 0
+                    border.color: Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.32)
 
+                    Behavior on color { ColorAnimation { duration: 140 } }
 
-                    color:
-
-                        delegateRoot.itemSelected
-
-                        ? Qt.rgba(
-                              liquidGlassComboBox.accentColor.r,
-                              liquidGlassComboBox.accentColor.g,
-                              liquidGlassComboBox.accentColor.b,
-                              0.16
-                          )
-
-                        : delegateRoot.itemHovered
-
-                          ? Qt.rgba(
-                                1,
-                                1,
-                                1,
-                                0.09
-                            )
-
-                          : "transparent"
-
-
-                    border.width:
-                        delegateRoot.itemSelected
-                        ? 1
-                        : 0
-
-
-                    border.color:
-                        Qt.rgba(
-                            liquidGlassComboBox.accentColor.r,
-                            liquidGlassComboBox.accentColor.g,
-                            liquidGlassComboBox.accentColor.b,
-                            0.32
-                        )
-
-
-                    Behavior on color {
-
-                        ColorAnimation {
-                            duration: 140
-                        }
-                    }
-
-
-                    Behavior on border.color {
-
-                        ColorAnimation {
-                            duration: 140
-                        }
-                    }
+                    Behavior on border.color { ColorAnimation { duration: 140 } }
                 }
 
 
-                /*
-                 * =================================================
-                 * Selection Highlight
-                 * =================================================
-                 */
+                // ========================
+                // Selection Highlight
+                // ========================
 
                 Rectangle {
-
                     anchors {
+                        left: parent.left
 
-                        left:
-                            parent.left
-
-                        top:
-                            parent.top
-
-                        bottom:
-                            parent.bottom
+                        top: parent.top
+                        bottom: parent.bottom
                     }
 
+                    width: delegateRoot.itemSelected ? 3 : 0
 
-                    width:
-                        delegateRoot.itemSelected
-                        ? 3
-                        : 0
+                    radius: width / 2
 
-
-                    radius:
-                        width / 2
-
-
-                    color:
-                        Qt.rgba(
-                            liquidGlassComboBox.accentColor.r,
-                            liquidGlassComboBox.accentColor.g,
-                            liquidGlassComboBox.accentColor.b,
-                            0.75
-                        )
-
+                    color: Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.75)
 
                     Behavior on width {
-
                         NumberAnimation {
-
                             duration: 180
-
-                            easing.type:
-                                Easing.OutCubic
+                            easing.type: Easing.OutCubic
                         }
                     }
                 }
 
 
-                /*
-                 * =================================================
-                 * Item Text
-                 * =================================================
-                 */
+                // ==============
+                // Item Text
+                // ==============
 
                 Text {
-
                     anchors {
-
-                        left:
-                            parent.left
+                        left: parent.left
 
                         leftMargin: 15
 
-                        right:
-                            checkMark.left
+                        right: checkMark.left
 
                         rightMargin: 8
 
-                        verticalCenter:
-                            parent.verticalCenter
+                        verticalCenter: parent.verticalCenter
                     }
 
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
 
-                    text:
-                        liquidGlassComboBox.getText(index)
+                    text: liquidGlassComboBox.getText(index)
 
+                    elide: Text.ElideRight
 
-                    elide:
-                        Text.ElideRight
+                    color: delegateRoot.itemSelected
+                                ? Qt.rgba(1, 1, 1, 0.98)
+                                : delegateRoot.itemHovered
+                                    ? Qt.rgba(1, 1, 1, 0.88)
+                                    : Qt.rgba(1, 1, 1, 0.68)
 
+                    font.pixelSize: 15
+                    font.weight: delegateRoot.itemSelected
+                                    ? Font.DemiBold
+                                    : Font.Medium
 
-                    color:
-
-                        delegateRoot.itemSelected
-
-                        ? Qt.rgba(
-                              1,
-                              1,
-                              1,
-                              0.98
-                          )
-
-                        : delegateRoot.itemHovered
-
-                          ? Qt.rgba(
-                                1,
-                                1,
-                                1,
-                                0.88
-                            )
-
-                          : Qt.rgba(
-                                1,
-                                1,
-                                1,
-                                0.68
-                            )
-
-
-                    font.pixelSize:
-                        15
-
-
-                    font.weight:
-
-                        delegateRoot.itemSelected
-
-                        ? Font.DemiBold
-
-                        : Font.Medium
-
-
-                    Behavior on color {
-
-                        ColorAnimation {
-                            duration: 120
-                        }
-                    }
+                    Behavior on color { ColorAnimation { duration: 120 } }
                 }
 
 
-                /*
-                 * =================================================
-                 * Check Mark
-                 * =================================================
-                 */
+                // ===============
+                // Check Mark
+                // ===============
 
                 Text {
-
                     id: checkMark
 
-
                     anchors {
-
-                        right:
-                            parent.right
+                        right: parent.right
 
                         rightMargin: 14
 
-                        verticalCenter:
-                            parent.verticalCenter
+                        verticalCenter: parent.verticalCenter
                     }
 
+                    text: "✓"
 
-                    text:
-                        "✓"
+                    color: Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.95)
 
+                    font.pixelSize: 15
 
-                    color:
-                        Qt.rgba(
-                            liquidGlassComboBox.accentColor.r,
-                            liquidGlassComboBox.accentColor.g,
-                            liquidGlassComboBox.accentColor.b,
-                            0.95
-                        )
+                    font.weight: Font.Bold
 
+                    opacity: delegateRoot.itemSelected ? 1 : 0
 
-                    font.pixelSize:
-                        15
+                    scale: delegateRoot.itemSelected ? 1 : 0.6
 
-
-                    font.weight:
-                        Font.Bold
-
-
-                    opacity:
-                        delegateRoot.itemSelected
-                        ? 1
-                        : 0
-
-
-                    scale:
-                        delegateRoot.itemSelected
-                        ? 1
-                        : 0.6
-
-
-                    Behavior on opacity {
-
-                        NumberAnimation {
-                            duration: 140
-                        }
-                    }
-
+                    Behavior on opacity { NumberAnimation { duration: 140 } }
 
                     Behavior on scale {
-
                         NumberAnimation {
-
                             duration: 180
-
-                            easing.type:
-                                Easing.OutBack
+                            easing.type: Easing.OutBack
                         }
                     }
                 }
 
 
-                /*
-                 * =================================================
-                 * Delegate Mouse
-                 * =================================================
-                 */
+                // ===================
+                // Delegate Mouse
+                // ===================
 
                 MouseArea {
-
                     id: delegateMouse
 
-
-                    anchors.fill:
-                        parent
-
+                    anchors.fill: parent
 
                     hoverEnabled: true
 
-
-                    cursorShape:
-                        Qt.PointingHandCursor
-
+                    cursorShape: Qt.PointingHandCursor
 
                     onClicked: {
-
-                        liquidGlassComboBox.selectIndex(
-                            index,
-                            true
-                        )
-
-
+                        liquidGlassComboBox.selectIndex(index, true)
                         popup.close()
                     }
                 }
 
 
-                /*
-                 * =================================================
-                 * Add Animation
-                 * =================================================
-                 */
+                // ==================
+                // Add Animation
+                // ==================
 
                 opacity: 0
 
                 scale: 0.96
 
-
-                Component.onCompleted: {
-
-                    itemAppear.start()
-                }
-
+                Component.onCompleted: { itemAppear.start() }
 
                 ParallelAnimation {
-
                     id: itemAppear
 
-
                     NumberAnimation {
+                        target: delegateRoot
 
-                        target:
-                            delegateRoot
-
-                        property:
-                            "opacity"
+                        property: "opacity"
 
                         from: 0
                         to: 1
 
                         duration: 180
 
-                        easing.type:
-                            Easing.OutCubic
+                        easing.type: Easing.OutCubic
                     }
 
-
                     NumberAnimation {
+                        target: delegateRoot
 
-                        target:
-                            delegateRoot
-
-                        property:
-                            "scale"
+                        property: "scale"
 
                         from: 0.96
                         to: 1
 
                         duration: 220
 
-                        easing.type:
-                            Easing.OutBack
+                        easing.type: Easing.OutBack
                     }
                 }
             }
 
 
-            /*
-             * ====================================================
-             * Current Index Synchronization
-             * ====================================================
-             */
+            // ==================================
+            // Current Index Synchronization
+            // ==================================
 
             onCurrentIndexChanged: {
-
-                if (
-                    currentIndex >= 0 &&
-                    currentIndex < count
-                ) {
-
-                    positionViewAtIndex(
-                        currentIndex,
-                        ListView.Contain
-                    )
+                if (currentIndex >= 0 && currentIndex < count) {
+                    positionViewAtIndex(currentIndex, ListView.Contain)
                 }
             }
         }
 
 
-        /*
-         * ========================================================
-         * Popup Focus
-         * ========================================================
-         */
-
-        /*Keys.onPressed:
-            function(event) {
-
-            if (
-                event.key === Qt.Key_Escape
-            ) {
-
-                popup.close()
-
-                event.accepted = true
-
-                return
-            }
-
-
-            if (
-                event.key === Qt.Key_Down
-            ) {
-
-                liquidGlassComboBox.nextItem()
-
-                event.accepted = true
-
-                return
-            }
-
-
-            if (
-                event.key === Qt.Key_Up
-            ) {
-
-                liquidGlassComboBox.previousItem()
-
-                event.accepted = true
-
-                return
-            }
-
-
-            if (
-                event.key === Qt.Key_Return ||
-                event.key === Qt.Key_Enter
-            ) {
-
-                popup.close()
-
-                event.accepted = true
-            }
-        }*/
-
-
-        /*
-         * ========================================================
-         * Popup Open
-         * ========================================================
-         */
+        // ===============
+        // Popup Open
+        // ===============
 
         onOpened: {
-
             listView.forceActiveFocus()
 
-
-            if (
-                liquidGlassComboBox.currentIndex >= 0
-            ) {
-
-                listView.positionViewAtIndex(
-                    liquidGlassComboBox.currentIndex,
-                    ListView.Contain
-                )
+            if (liquidGlassComboBox.currentIndex >= 0) {
+                listView.positionViewAtIndex(liquidGlassComboBox.currentIndex, ListView.Contain)
             }
         }
 
-
-        onClosed: {
-
-            liquidGlassComboBox.forceActiveFocus()
-        }
+        onClosed: { liquidGlassComboBox.forceActiveFocus() }
     }
 
-
-    /*
-     * ============================================================
-     * Model Changes
-     * ============================================================
-     */
-
-    onModelChanged: {
-
-        synchronizeModel()
-    }
-
+    onModelChanged: { synchronizeModel() }
 
     onTextRoleChanged: {
-
-
+        // ==========================================
+        // Trigger a binding refresh only
+        //
+        // CurrentText is computed by a function
+        //
+        // No additional caching is required
+        // ==========================================
     }
 
-
-    /*
-     * ============================================================
-     * Startup
-     * ============================================================
-     */
-
-    Component.onCompleted: {
-
-        synchronizeModel()
-    }
+    Component.onCompleted: { synchronizeModel() }
 }
