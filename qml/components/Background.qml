@@ -6,6 +6,7 @@ Item {
 
     anchors.fill: parent
 
+
     // =================================
     // Animated Gradient Background
     // =================================
@@ -20,12 +21,13 @@ Item {
         }
     }
 
+
     // ===============================
     // Animated Decorative Shapes
     // ===============================
 
     Repeater {
-        model: 8
+        model: 12
 
         Rectangle {
             id: shape
@@ -122,6 +124,7 @@ Item {
         }
     }
 
+
     // =============================
     // Additional Accent Shapes
     // =============================
@@ -160,6 +163,7 @@ Item {
         layer.effect: MultiEffect { blurEnabled: true; blur: 0.5; blurMax: 48 }
     }
 
+
     // ==========================================
     // Animation Timer for Background Shapes
     // ==========================================
@@ -170,6 +174,6 @@ Item {
         running: true
         repeat: true
         interval: 16
-        onTriggered: animTime += 0.012
+        onTriggered: animTime += 0.01
     }
 }
