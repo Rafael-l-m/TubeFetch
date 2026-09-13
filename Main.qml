@@ -5,10 +5,14 @@ import "qml/components" as Comp
 
 ApplicationWindow {
     id: window
-    width: 640
-    height: 880
+
+    width: 900
+    //height: 1100
+    height: 400
+
     minimumWidth: 200
     minimumHeight: 250
+
     visible: true
     title: qsTr("Hello World")
     property bool lightMode: Application.styleHints.colorScheme === Qt.Light
@@ -20,7 +24,7 @@ ApplicationWindow {
 
     Comp.Background { }
 
-    ColumnLayout {
+    /*ColumnLayout {
         anchors.centerIn: parent
         spacing: 20
 
@@ -83,76 +87,57 @@ ApplicationWindow {
 
             onActivated: function(index) { console.log("Liquid Glass ComboBox: ", index, currentText) }
         }
-    }
-
-    /*GridLayout {
-        id: grid
-        columns: width < 400 ? 1 : 2
-        rowSpacing: 0
-        columnSpacing: 0
-        anchors.fill: parent
-
-        Rectangle {
-            id: rectangle1
-            color: window.lightMode ? window.reallyLight : window.reallyDark
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            ColumnLayout {
-                anchors.fill: parent
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-
-                Label {
-                    id: text1
-                    color: window.lightMode ? window.dark : window.light
-                    font.pixelSize: 120
-                    fontSizeMode: Text.Fit
-                    text: qsTr("Hello World")
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.margins: 16
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
-
-        Rectangle {
-            id: rectangle2
-            color: window.lightMode ? window.light : window.dark
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            ColumnLayout {
-                anchors.fill: parent
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-
-                Button {
-                    id: button1
-                    text: window.lightMode ? qsTr("\u263D  Dark mode")
-                                           : qsTr("\u263C  Light mode")
-                    Layout.bottomMargin: 16
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-
-                    contentItem: Text {
-                        text: button1.text
-                        color: window.lightMode ? window.light : window.dark
-                        font: button1.font
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-
-                    background: Rectangle {
-                        implicitWidth: 120
-                        implicitHeight: 36
-                        radius: 8
-                        color: window.lightMode ? window.dark : window.light
-                    }
-
-                    onClicked: window.lightMode = !window.lightMode
-                }
-            }
-        }
     }*/
 
+    ColumnLayout {
+        anchors.fill: parent
+
+        spacing: 0
+
+        Comp.LiquidGlassButton {
+            onClicked: {
+                segmentedSelection.append("Test")
+            }
+        }
+
+        Comp.LiquidGlassButton {
+            onClicked: {
+                segmentedSelection.remove(2)
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            color: "transparent"
+
+            StackView {
+                id: mainStackView
+
+                anchors.fill: parent
+
+
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height * 0.15
+
+            color: "transparent"
+
+            Comp.LiquidGlassSegmentedSelection {
+                id: segmentedSelection
+
+                anchors.centerIn: parent
+
+                width: parent.width * 0.35
+
+                Component.onCompleted: {
+                    append("Main")
+                }
+            }
+        }
+    }
 }
