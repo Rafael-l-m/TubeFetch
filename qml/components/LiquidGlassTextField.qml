@@ -248,7 +248,6 @@ Item {
         Behavior on scale {
             NumberAnimation {
                 duration: 220
-
                 easing.type: Easing.OutBack
             }
         }
@@ -374,9 +373,9 @@ Item {
     }
 
 
-    // =====================================================
+    // =======================
     // Focus Liquid Layer
-    // =====================================================
+    // =======================
 
     Rectangle {
         id: focusLiquid

@@ -1,82 +1,154 @@
-//import QtQuick
+import QtQuick
 
 /*
  * Usage:
- *     enabled: true
- *     currentIndex: 1
+ *      anchors.centerIn: parent
  *
- *     Component.onCompleted: {
- *         append(" ")
- *         append(" ")
- *         append(" ")
- *         append(" ")
- *     }
+ *      onClicked: function(index) { }
+ *      onSelectionChanged: function(index, text) { }
  *
- *     onClicked: function(index) {}
- *     onSelectionChanged: function (index, text) {}
+ *      onItemAdded: function(id, index, text) {
+ *          segmentedSelection.currentIndex = index
+ *      }
+ *
+ *      onAddRejected: function(text) { }
+ *      onItemRemoved: function(id, index, text) { }
+ *
+ *      Component.onCompleted: {
+ *          append("Main")
+ *      }
  */
 
-/*Item {
+Item {
     readonly property int count: segmentModel.count
 
-    property real minimumSegmentWidth: 80
-    property real horizontalPadding: 6
-    property real verticalPadding: 5
-    property real spacing: 4
-
     property int currentIndex: 0
+
     property int dragThreshold: 12
 
-    signal clicked(int index)
-    signal selectionChanged(int index, string text)
+    property real minimumSegmentWidth: 80
+    property real minimumSegmentHeight: 58
+
+    property real horizontalPadding: 6
+    property real verticalPadding: 5
+
+    property real spacing: 4
+
+    property real minWidthRatio: 0.3
+    property real maxWidthRatio: 0.8
+
+    readonly property real minComponentWidth: parent ? parent.width * minWidthRatio : 0
+    readonly property real maxComponentWidth: parent ? parent.width * maxWidthRatio : 0
+    readonly property real requiredWidth: count <= 1
+                                              ? minComponentWidth
+                                              : segmentRow.implicitWidth + horizontalPadding * 2
 
     id: liquidGlassSegmentedSelection
 
-    implicitWidth: segmentRow.width + liquidGlassSegmentedSelection.horizontalPadding * 2
-    implicitHeight: 58
+    width:
+        Math.max(
+            minComponentWidth,
+            Math.min(
+                maxComponentWidth,
+                requiredWidth
+            )
+        )
 
-    opacity: enabled ? 1 : 0.4
-
-    Behavior on opacity { NumberAnimation { duration: 200 } }
-
-
-    // ======================
-    // Interaction State
-    // ======================
+    implicitWidth: minComponentWidth
+    implicitHeight: Math.max(parent.height * 0.35, minimumSegmentHeight)
 
     property bool dragging: false
-
     property bool dragStarted: false
-
     property real pressX: 0
-
     property real indicatorStartX: 0
-
     property int dragStartIndex: 0
+
+    signal clicked(int index)
+    signal selectionChanged(int index, string text)
+    signal itemAdded(string id, int index, string text)
+
+    signal addRejected(string text)
+    signal itemRemoved(string id, int index, string text)
 
 
     // ============
     // Helpers
     // ============
 
-    function itemAt(index) { return repeater.itemAt(index) }
-
     function clamp(value, minValue, maxValue) {
         return Math.max(
-                    minValue,
-                        Math.min(
-                            value,
-                            maxValue
-                        )
-                )
+            minValue,
+            Math.min(
+                value,
+                maxValue
+            )
+        )
+    }
+
+    function itemAt(index) { return repeater.itemAt(index) }
+
+    function itemX(item) {
+        if (!item) { return 0 }
+        return segmentRow.x + item.x
     }
 
 
-    // ==========
-    // Model
-    // ==========
+    // ===============================================================
+    // Estimate the required width of a button based on its text
+    //
+    // Match the delegate's: label.implicitWidth + 40
+    // ===============================================================
+
+    function widthForText(text) {
+        textMetrics.text = text
+
+        return Math.max(
+            minimumSegmentWidth,
+            textMetrics.width + 40
+        )
+    }
+
+
+    // ================================================================
+    // Calculate the additional width required for one more button
+    // ================================================================
+
+    function requiredWidthWithText(text) {
+        if (count === 0) { return minComponentWidth }
+
+        if (count === 1) {
+            var firstWidth = widthForText(segmentModel.get(0).text)
+            var secondWidth = widthForText(text)
+
+            return firstWidth
+                + spacing
+                + secondWidth
+                + horizontalPadding * 2
+        }
+
+        return segmentRow.implicitWidth
+            + spacing
+            + widthForText(text)
+            + horizontalPadding * 2
+    }
 
     ListModel { id: segmentModel }
+
+
+    // ========================================================
+    // Used to pre-measure the text width
+    //
+    // Calculate the required space before append()
+    //
+    // Skip appending if it would exceed the maximum width
+    // ========================================================
+
+    TextMetrics {
+        id: textMetrics
+
+        font.pixelSize: 16
+        font.weight: Font.Medium
+    }
 
 
     // ===============
@@ -93,7 +165,6 @@
         color: Qt.rgba(1, 1, 1, 0.075)
 
         border.width: 1
-
         border.color: Qt.rgba(1, 1, 1, 0.20)
 
         gradient: Gradient {
@@ -130,6 +201,7 @@
             }
 
             height: parent.height * 0.35
+
             radius: height / 2
 
             gradient: Gradient {
@@ -146,16 +218,155 @@
         }
     }
 
+
+    // ============
+    // Content
+    // ============
+
     Item {
         id: content
 
-        x: liquidGlassSegmentedSelection.horizontalPadding
-        y: liquidGlassSegmentedSelection.verticalPadding
+        x: horizontalPadding
+        y: verticalPadding
 
-        width: segmentRow.width
-        height: liquidGlassSegmentedSelection.height - liquidGlassSegmentedSelection.verticalPadding * 2
+        width:
+            Math.max(
+                0,
+                liquidGlassSegmentedSelection.width
+                - horizontalPadding * 2
+            )
+
+        height:
+            Math.max(
+                0,
+                liquidGlassSegmentedSelection.height
+                - verticalPadding * 2
+            )
 
         clip: true
+    }
+
+
+    // ================
+    // Segment Row
+    // ================
+
+    Row {
+        id: segmentRow
+
+        parent: content
+
+        // =============================================================================================
+        // Row automatically sizes itself using its implicitWidth when it contains multiple buttons
+        //
+        // For a single button, the delegate directly uses content.width
+        // =============================================================================================
+
+        x: count === 1
+              ? 0
+              : Math.max(
+                    0,
+                    (content.width - width) / 2
+                )
+
+        y: 0
+
+        height: content.height
+
+        spacing: liquidGlassSegmentedSelection.spacing
+
+        z: 2
+
+        Repeater {
+            id: repeater
+
+            model: segmentModel
+
+            delegate: Item {
+                id: segment
+
+                required property string itemId
+                required property string text
+                required property int index
+
+
+                // ==============================================================================
+                // With a single button, the button takes up the entire content
+                //
+                // With multiple buttons, button widths are determined by their text content
+                // ==============================================================================
+
+                width: liquidGlassSegmentedSelection.count === 1
+                            ? content.width
+                            : Math.max(
+                                liquidGlassSegmentedSelection.minimumSegmentWidth,
+                                label.implicitWidth + 40
+                            )
+
+                height: content.height
+
+
+                // ==========
+                // Label
+                // ==========
+
+                Text {
+                    id: label
+
+                    anchors.centerIn: parent
+
+                    text: segment.text
+
+                    color: segment.index === liquidGlassSegmentedSelection.currentIndex
+                                ? Qt.rgba(1, 1, 1, 0.98)
+                                : Qt.rgba(1, 1, 1, 0.62)
+
+                    font.pixelSize: segment.index === liquidGlassSegmentedSelection.currentIndex ? 16 : 15
+
+                    font.weight: segment.index === liquidGlassSegmentedSelection.currentIndex
+                                    ? Font.DemiBold
+                                    : Font.Medium
+
+                    Behavior on color { ColorAnimation { duration: 160 } }
+                }
+
+
+                // ==================
+                // Add Animation
+                // ==================
+
+                opacity: 0
+                scale: 0.75
+
+                Component.onCompleted: { appear.start() }
+
+                ParallelAnimation {
+                    id: appear
+
+                    NumberAnimation {
+                        target: segment
+
+                        property: "opacity"
+
+                        to: 1
+
+                        duration: 220
+                    }
+
+                    NumberAnimation {
+                        target: segment
+
+                        property: "scale"
+
+                        to: 1
+
+                        duration: 280
+
+                        easing.type: Easing.OutBack
+                    }
+                }
+            }
+        }
     }
 
 
@@ -172,16 +383,16 @@
         y: 0
 
         width: 0
+
         height: content.height
 
-        radius:height / 2
+        radius: height / 2
 
         z: 1
 
         color: Qt.rgba(1, 1, 1, 0.14)
 
         border.width: 1
-
         border.color: Qt.rgba(1, 1, 1, 0.34)
 
         gradient: Gradient {
@@ -222,100 +433,8 @@
 
 
     // ================
-    // Segment Row
-    // ================
-
-    Row {
-        id: segmentRow
-
-        parent: content
-
-        x: 0
-        y: 0
-
-        height: content.height
-
-        spacing: liquidGlassSegmentedSelection.spacing
-
-        z: 2
-
-        Repeater {
-            id: repeater
-
-            model: segmentModel
-
-            delegate: Item {
-                id: segment
-
-                required property int index
-                required property string text
-
-                width: Math.max(liquidGlassSegmentedSelection.minimumSegmentWidth, label.implicitWidth + 40)
-                height: content.height
-
-                Text {
-                    id: label
-
-                    anchors.centerIn: parent
-
-                    text: segment.text
-
-                    color: segment.index === liquidGlassSegmentedSelection.currentIndex
-                                ? Qt.rgba(1, 1, 1, 0.98)
-                                : Qt.rgba(1, 1, 1, 0.62)
-
-                    font.pixelSize: segment.index === liquidGlassSegmentedSelection.currentIndex ? 16 : 15
-                    font.weight: segment.index === liquidGlassSegmentedSelection.currentIndex ? Font.DemiBold : Font.Medium
-
-                    Behavior on color { ColorAnimation { duration: 160 } }
-                }
-
-
-                // ==================
-                // Add Animation
-                // ==================
-
-                opacity: 0
-
-                scale: 0.75
-
-                Component.onCompleted: { appear.start() }
-
-                ParallelAnimation {
-                    id: appear
-
-                    NumberAnimation {
-                        target: segment
-
-                        property: "opacity"
-
-                        to: 1
-
-                        duration: 220
-                    }
-
-                    NumberAnimation {
-                        target: segment
-
-                        property: "scale"
-
-                        to: 1
-
-                        duration: 280
-
-                        easing.type: Easing.OutBack
-                    }
-                }
-            }
-        }
-    }
-
-
-    // =======================
     // Interaction
-    //
-    // Only One MouseArea
-    // =======================
+    // ================
 
     MouseArea {
         id: interaction
@@ -341,7 +460,9 @@
 
                 if (!item) { continue }
 
-                if (xPos >= item.x && xPos <= item.x + item.width) { return i }
+                var itemX = segmentRow.x + item.x
+
+                if (xPos >= itemX && xPos <= itemX + item.width) { return i }
             }
 
             return -1
@@ -349,32 +470,19 @@
 
         onPressed: function(mouse) {
             liquidGlassSegmentedSelection.pressX = mouse.x
-
             liquidGlassSegmentedSelection.dragStarted = false
-
             liquidGlassSegmentedSelection.dragging = false
-
             liquidGlassSegmentedSelection.dragStartIndex = liquidGlassSegmentedSelection.currentIndex
-
             liquidGlassSegmentedSelection.indicatorStartX = indicator.x
         }
 
         onPositionChanged: function(mouse) {
-            if (!pressed) { return }
+            if (!pressed || liquidGlassSegmentedSelection.count <= 1) { return }
 
             var delta = mouse.x - liquidGlassSegmentedSelection.pressX
 
-
-            // ================================================================
-            // Still treated as a click if it doesn’t exceed the threshold
-            // ================================================================
-
-            if (!liquidGlassSegmentedSelection.dragStarted && Math.abs(delta) < liquidGlassSegmentedSelection.dragThreshold) { return }
-
-
-            // =======================
-            // Real Start: "Drag"
-            // =======================
+            if (!liquidGlassSegmentedSelection.dragStarted
+                    && Math.abs(delta) < liquidGlassSegmentedSelection.dragThreshold) { return }
 
             if (!liquidGlassSegmentedSelection.dragStarted) {
                 liquidGlassSegmentedSelection.dragStarted = true
@@ -387,18 +495,15 @@
             // =====================
 
             var newX = liquidGlassSegmentedSelection.indicatorStartX + delta
-            var maxX = Math.max(0, content.width - indicator.width)
+            var minX = segmentRow.x
+            var maxX = segmentRow.x + segmentRow.width - indicator.width
 
-            indicator.x = liquidGlassSegmentedSelection.clamp(newX, 0, maxX)
+            maxX = Math.max(minX, maxX)
+
+            indicator.x = liquidGlassSegmentedSelection.clamp(newX, minX, maxX)
         }
 
-
-        // ============
-        // Release
-        // ============
-
         onReleased: function(mouse) {
-
 
             // ==========
             // CLICK
@@ -431,12 +536,15 @@
     }
 
 
-    // ================
-    // Set Current
-    // ================
+    // ==============
+    // Selection
+    // ==============
 
     function setCurrentIndex(index) {
-        if (count <= 0) { return }
+        if (count <= 0) {
+            currentIndex = 0
+            return
+        }
 
         index = clamp(index, 0, count - 1)
 
@@ -446,31 +554,19 @@
 
         if (!item) { return }
 
-
         indicator.width = item.width
 
-        indicator.x = item.x
+        indicator.x = segmentRow.x + item.x
 
         selectionChanged(index, item.text)
     }
 
-
-    // =================
-    // Snap Current
-    // =================
-
     function snapToCurrent() { setCurrentIndex(currentIndex) }
-
-
-    // ====================
-    // Snap To Nearest
-    // ====================
 
     function snapToNearest() {
         if (count <= 0) { return }
 
         var center = indicator.x + indicator.width / 2
-
         var bestIndex = 0
         var bestDistance = Number.MAX_VALUE
 
@@ -479,8 +575,7 @@
 
             if (!item) { continue }
 
-            var itemCenter = item.x + item.width / 2
-
+            var itemCenter = segmentRow.x + item.x + item.width / 2
             var distance = Math.abs(center - itemCenter)
 
             if (distance < bestDistance) {
@@ -493,1192 +588,351 @@
     }
 
 
-    // ==============
-    // Model API
-    // ==============
+    // ===========
+    // ID API
+    // ===========
 
-    function append(text) {
-        segmentModel.append({ "text": text })
-
-        Qt.callLater(function() { initializeIndicator() })
-    }
-
-    function insert(index, text) {
-        index = clamp(index, 0, count)
-
-        segmentModel.insert(index, { "text": text })
-
-        if (index <= currentIndex && count > 1) { ++currentIndex }
-
-        Qt.callLater(function() { initializeIndicator() })
-    }
-
-    function remove(index) {
-        if (index < 0 || index >= count) { return }
-
-        segmentModel.remove(index)
-
-        if (index < currentIndex) { --currentIndex }
-
-        if (currentIndex >= count) { currentIndex = Math.max(0, count - 1) }
-
-        Qt.callLater(function() { initializeIndicator() })
+    function containsId(id) {
+        for (var i = 0; i < count; ++i) { if (segmentModel.get(i).itemId === id) { return true } }
+        return false
     }
 
 
-    // ==========================================
-    // Initialize: show indicator when start
-    // ==========================================
+    // ================================================
+    // Find index from id; return -1 if not exists
+    // ================================================
 
-    function initializeIndicator() {
-
-        Qt.callLater(function() {
-            if (count <= 0) {
-                indicator.width = 0
-                return
-            }
-
-            Qt.callLater(function() { setCurrentIndex(currentIndex) })
-        })
+    function indexOfId(id) {
+        for (var i = 0; i < count; ++i) { if (segmentModel.get(i).itemId === id) { return i } }
+        return -1
     }
 
 
-    // ====================
-    // Initial Startup
-    // ====================
+    // ====================================================
+    // Find item from id (return model -> data objects)
+    // ====================================================
 
-    Component.onCompleted: { initializeIndicator() }
+    function itemDataById(id) {
+        var index = indexOfId(id)
 
+        if (index < 0) { return null }
 
-    // ==========
-    // Debug
-    // ==========
-
-    Connections {
-        target: segmentRow
-
-        function onWidthChanged() { if (!liquidGlassSegmentedSelection.dragging) { liquidGlassSegmentedSelection.initializeIndicator() } }
-    }
-}*/
-
-import QtQuick
-
-/*
- * Usage:
- *
- *     LiquidGlassSegmentedSelection {
- *         width: 400
- *
- *         Component.onCompleted: {
- *             append("A")
- *             append("B")
- *             append("C")
- *         }
- *
- *         onClicked: function(index) {}
- *         onSelectionChanged: function(index, text) {}
- *     }
- *
- *
- * If width is NOT specified:
- *
- *     LiquidGlassSegmentedSelection {
- *         Component.onCompleted: {
- *             append("A")
- *             append("B")
- *         }
- *     }
- *
- * The component will use its implicitWidth.
- */
-
-Item {
-    id: liquidGlassSegmentedSelection
-
-    // ======================
-    // Public Properties
-    // ======================
-
-    readonly property int count: segmentModel.count
-
-    /*
-     * Minimum width of each segment.
-     */
-    property real minimumSegmentWidth: 80
-
-    /*
-     * Extra horizontal space inside the outer background.
-     */
-    property real horizontalPadding: 6
-
-    /*
-     * Vertical space inside the outer background.
-     */
-    property real verticalPadding: 5
-
-    /*
-     * Space between segments.
-     */
-    property real spacing: 4
-
-    /*
-     * Currently selected segment.
-     */
-    property int currentIndex: 0
-
-    /*
-     * Distance required before a press becomes a drag.
-     */
-    property int dragThreshold: 12
-
-    readonly property bool contentFilled:
-        segmentRow.width >= content.width - 0.5
-
-
-    // ======================
-    // Signals
-    // ======================
-
-    signal clicked(int index)
-    signal selectionChanged(int index, string text)
-
-
-    // ======================
-    // Size
-    // ======================
-
-    /*
-     * Important:
-     *
-     * implicitWidth is based on the entire Row.
-     *
-     * If the user does:
-     *
-     *     width: 400
-     *
-     * the actual component becomes 400 wide.
-     *
-     * The Row itself is then centered inside that 400px area.
-     */
-    implicitWidth:
-        segmentRow.width
-        + liquidGlassSegmentedSelection.horizontalPadding * 2
-
-    implicitHeight: 58
-
-
-    // ======================
-    // Appearance
-    // ======================
-
-    opacity: enabled ? 1 : 0.4
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: 200
-        }
+        return segmentModel.get(index)
     }
 
 
-    // ======================
-    // Interaction State
-    // ======================
+    // =========================================================
+    // Match text -> first match; return -1 if do not match
+    // =========================================================
 
-    property bool dragging: false
-
-    property bool dragStarted: false
-
-    property real pressX: 0
-
-    property real indicatorStartX: 0
-
-    property int dragStartIndex: 0
-
-
-    // ======================
-    // Helpers
-    // ======================
-
-    function itemAt(index) {
-        return repeater.itemAt(index)
+    function indexOfText(text) {
+        for (var i = 0; i < count; ++i) { if (segmentModel.get(i).text === text) { return i } }
+        return -1
     }
 
 
-    function clamp(value, minValue, maxValue) {
-        return Math.max(
-            minValue,
-            Math.min(
-                value,
-                maxValue
-            )
-        )
+    // =========================================================
+    // Match id -> first match; return -1 if do not match
+    // =========================================================
+
+    function idOfText(text) {
+        var index = indexOfText(text)
+
+        if (index < 0) { return "" }
+
+        return segmentModel.get(index).itemId
     }
 
+    property int nextId: 1
 
-    /*
-     * Get the absolute X position of an item
-     * inside content.
-     *
-     * item.x is relative to segmentRow.
-     *
-     * Therefore:
-     *
-     *     segmentRow.x + item.x
-     *
-     * is the actual X coordinate inside content.
-     */
-    function itemX(item) {
-        if (!item) {
-            return 0
+    function generateId() {
+        var id = "segment_" + nextId
+
+        ++nextId
+
+        while (containsId(id)) {
+            id = "segment_" + nextId
+            ++nextId
         }
 
-        return segmentRow.x + item.x
+        return id
     }
 
 
-    // ======================
-    // Model
-    // ======================
+    // ===========
+    // Append
+    // ===========
 
-    ListModel {
-        id: segmentModel
-    }
 
-
-    // ======================
-    // Background
-    // ======================
-
-    Rectangle {
-        id: background
-
-        anchors.fill: parent
-
-        radius: height / 2
-
-        color: Qt.rgba(1, 1, 1, 0.075)
-
-        border.width: 1
-
-        border.color: Qt.rgba(1, 1, 1, 0.20)
-
-
-        gradient: Gradient {
-
-            GradientStop {
-                position: 0
-
-                color: Qt.rgba(
-                    1,
-                    1,
-                    1,
-                    0.17
-                )
-            }
-
-            GradientStop {
-                position: 0.45
-
-                color: Qt.rgba(
-                    1,
-                    1,
-                    1,
-                    0.07
-                )
-            }
-
-            GradientStop {
-                position: 1
-
-                color: Qt.rgba(
-                    0.70,
-                    0.82,
-                    1,
-                    0.045
-                )
-            }
-        }
-
-
-        // ===================
-        // Top Reflection
-        // ===================
-
-        Rectangle {
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-
-                leftMargin: 12
-                rightMargin: 12
-                topMargin: 4
-            }
-
-            height: parent.height * 0.35
-
-            radius: height / 2
-
-
-            gradient: Gradient {
-
-                GradientStop {
-                    position: 0
-
-                    color: Qt.rgba(
-                        1,
-                        1,
-                        1,
-                        0.22
-                    )
-                }
-
-                GradientStop {
-                    position: 1
-
-                    color: Qt.rgba(
-                        1,
-                        1,
-                        1,
-                        0.01
-                    )
-                }
-            }
-        }
-    }
-
-
-    // ======================
-    // Content
-    // ======================
-
-    /*
-     * IMPORTANT:
-     *
-     * content now fills the component.
-     *
-     * Previously this was:
-     *
-     *     width: segmentRow.width
-     *
-     * which caused the Row to always start from the left.
-     *
-     * Now content uses the actual component width.
-     */
-    Item {
-        id: content
-
-        x: liquidGlassSegmentedSelection.horizontalPadding
-
-        y: liquidGlassSegmentedSelection.verticalPadding
-
-        width:
-            Math.max(
-                0,
-                liquidGlassSegmentedSelection.width
-                - liquidGlassSegmentedSelection.horizontalPadding * 2
-            )
-
-        height:
-            Math.max(
-                0,
-                liquidGlassSegmentedSelection.height
-                - liquidGlassSegmentedSelection.verticalPadding * 2
-            )
-
-        clip: true
-    }
-
-
-    // ======================
-    // Segment Row
-    // ======================
-
-    Row {
-        id: segmentRow
-
-        parent: content
-
-        /*
-         * This is the key part.
-         *
-         * The entire segment row is centered
-         * inside content.
-         */
-        x: Math.max(
-            0,
-            (content.width - width) / 2
-        )
-
-        y: 0
-
-        height: content.height
-
-        spacing: liquidGlassSegmentedSelection.spacing
-
-        z: 2
-
-
-        Repeater {
-            id: repeater
-
-            model: segmentModel
-
-
-            delegate: Item {
-                id: segment
-
-                required property int index
-
-                required property string text
-
-
-                /*
-                 * Width of each individual segment.
-                 *
-                 * Minimum width:
-                 *
-                 *     minimumSegmentWidth
-                 *
-                 * Otherwise text width + 40.
-                 */
-                width:
-                    Math.max(
-                        liquidGlassSegmentedSelection.minimumSegmentWidth,
-                        label.implicitWidth + 40
-                    )
-
-                height: content.height
-
-
-                // ======================
-                // Label
-                // ======================
-
-                Text {
-                    id: label
-
-                    anchors.centerIn: parent
-
-                    text: segment.text
-
-                    color:
-                        segment.index
-                        === liquidGlassSegmentedSelection.currentIndex
-
-                        ? Qt.rgba(
-                            1,
-                            1,
-                            1,
-                            0.98
-                        )
-
-                        : Qt.rgba(
-                            1,
-                            1,
-                            1,
-                            0.62
-                        )
-
-
-                    font.pixelSize:
-                        segment.index
-                        === liquidGlassSegmentedSelection.currentIndex
-
-                        ? 16
-                        : 15
-
-
-                    font.weight:
-                        segment.index
-                        === liquidGlassSegmentedSelection.currentIndex
-
-                        ? Font.DemiBold
-                        : Font.Medium
-
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 160
-                        }
-                    }
-                }
-
-
-                // ======================
-                // Add Animation
-                // ======================
-
-                opacity: 0
-
-                scale: 0.75
-
-
-                Component.onCompleted: {
-                    appear.start()
-                }
-
-
-                ParallelAnimation {
-                    id: appear
-
-
-                    NumberAnimation {
-                        target: segment
-
-                        property: "opacity"
-
-                        to: 1
-
-                        duration: 220
-                    }
-
-
-                    NumberAnimation {
-                        target: segment
-
-                        property: "scale"
-
-                        to: 1
-
-                        duration: 280
-
-                        easing.type: Easing.OutBack
-                    }
-                }
-            }
-        }
-    }
-
-
-    // ======================
-    // Indicator
-    // ======================
-
-    Rectangle {
-        id: indicator
-
-        parent: content
-
-        x: 0
-
-        y: 0
-
-        width: 0
-
-        height: content.height
-
-        radius: height / 2
-
-        z: 1
-
-
-        color: Qt.rgba(
-            1,
-            1,
-            1,
-            0.14
-        )
-
-
-        border.width: 1
-
-        border.color: Qt.rgba(
-            1,
-            1,
-            1,
-            0.34
-        )
-
-
-        gradient: Gradient {
-
-            GradientStop {
-                position: 0
-
-                color: Qt.rgba(
-                    1,
-                    1,
-                    1,
-                    0.26
-                )
-            }
-
-            GradientStop {
-                position: 0.5
-
-                color: Qt.rgba(
-                    1,
-                    1,
-                    1,
-                    0.13
-                )
-            }
-
-            GradientStop {
-                position: 1
-
-                color: Qt.rgba(
-                    0.70,
-                    0.85,
-                    1,
-                    0.10
-                )
-            }
-        }
-
-
-        // ======================
-        // Indicator X Animation
-        // ======================
-
-        Behavior on x {
-            enabled:
-                !liquidGlassSegmentedSelection.dragging
-
-            NumberAnimation {
-                duration: 320
-
-                easing.type: Easing.OutCubic
-            }
-        }
-
-
-        // ======================
-        // Indicator Width Animation
-        // ======================
-
-        Behavior on width {
-            enabled:
-                !liquidGlassSegmentedSelection.dragging
-
-            NumberAnimation {
-                duration: 280
-
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
-
-
-    // ======================
-    // Interaction
+    // ==========================================================================================
+    // Add Button
     //
-    // Only One MouseArea
-    // ======================
+    // Returns the ID of the newly created item
+    //
+    // Returns an empty string if the operation fails (Reason: overflows parent.width * 0.8)
+    // ==========================================================================================
 
-    MouseArea {
-        id: interaction
+    function append(text, customId) {
+        var newWidth = requiredWidthWithText(text)
 
-        parent: content
-
-        anchors.fill: parent
-
-        z: 10
-
-        hoverEnabled: true
-
-        cursorShape: Qt.PointingHandCursor
-
-
-        // ======================
-        // Find Segment
-        // ======================
-
-        function indexAt(xPos) {
-
-            for (
-                var i = 0;
-                i < liquidGlassSegmentedSelection.count;
-                ++i
-            ) {
-
-                var item =
-                    liquidGlassSegmentedSelection.itemAt(i)
-
-
-                if (!item) {
-                    continue
-                }
-
-
-                /*
-                 * item.x is relative to segmentRow.
-                 *
-                 * Add segmentRow.x because the Row
-                 * itself may now be centered.
-                 */
-                var itemX =
-                    segmentRow.x + item.x
-
-
-                if (
-                    xPos >= itemX
-                    &&
-                    xPos <= itemX + item.width
-                ) {
-                    return i
-                }
-            }
-
-
-            return -1
+        if (newWidth > maxComponentWidth + 0.5) {
+            addRejected(text)
+            return ""
         }
 
-
-        // ======================
-        // Pressed
-        // ======================
-
-        onPressed: function(mouse) {
-
-            liquidGlassSegmentedSelection.pressX =
-                mouse.x
-
-
-            liquidGlassSegmentedSelection.dragStarted =
-                false
-
-
-            liquidGlassSegmentedSelection.dragging =
-                false
-
-
-            liquidGlassSegmentedSelection.dragStartIndex =
-                liquidGlassSegmentedSelection.currentIndex
-
-
-            liquidGlassSegmentedSelection.indicatorStartX =
-                indicator.x
-        }
-
-
-        // ======================
-        // Position Changed
-        // ======================
-
-        onPositionChanged: function(mouse) {
-
-            if (!pressed || liquidGlassSegmentedSelection.count === 1) {
-                console.log("Can not drag: only 1 item")
-                return
-            }
-
-
-            var delta =
-                mouse.x
-                - liquidGlassSegmentedSelection.pressX
-
-
-            // =====================================================
-            // Still treated as a click if it doesn't exceed
-            // the drag threshold.
-            // =====================================================
-
-            if (
-                !liquidGlassSegmentedSelection.dragStarted
-                &&
-                Math.abs(delta)
-                <
-                liquidGlassSegmentedSelection.dragThreshold
-            ) {
-                return
-            }
-
-
-            // ======================
-            // Real Start: Drag
-            // ======================
-
-            if (
-                !liquidGlassSegmentedSelection.dragStarted
-            ) {
-
-                liquidGlassSegmentedSelection.dragStarted =
-                    true
-
-                liquidGlassSegmentedSelection.dragging =
-                    true
-            }
-
-
-            // ======================
-            // Indicator Follow
-            // ======================
-
-            var newX =
-                liquidGlassSegmentedSelection.indicatorStartX
-                + delta
-
-
-            /*
-             * IMPORTANT:
-             *
-             * Since segmentRow can now be centered,
-             * indicator should stay within the actual
-             * segment row.
-             */
-            var minX =
-                segmentRow.x
-
-
-            var maxX =
-                segmentRow.x
-                + segmentRow.width
-                - indicator.width
-
-
-            maxX =
-                Math.max(
-                    minX,
-                    maxX
-                )
-
-
-            indicator.x =
-                liquidGlassSegmentedSelection.clamp(
-                    newX,
-                    minX,
-                    maxX
-                )
-        }
-
-
-        // ======================
-        // Release
-        // ======================
-
-        onReleased: function(mouse) {
-
-            // ======================
-            // CLICK
-            // ======================
-
-            if (
-                !liquidGlassSegmentedSelection.dragStarted
-            ) {
-
-                var index =
-                    indexAt(mouse.x)
-
-
-                if (index >= 0) {
-
-                    liquidGlassSegmentedSelection
-                        .setCurrentIndex(index)
-
-
-                    liquidGlassSegmentedSelection
-                        .clicked(index)
-                }
-
-
-                return
-            }
-
-
-            // ======================
-            // DRAG
-            // ======================
-
-            liquidGlassSegmentedSelection.dragging =
-                false
-
-
-            liquidGlassSegmentedSelection.snapToNearest()
-        }
-
-
-        // ======================
-        // Canceled
-        // ======================
-
-        onCanceled: {
-
-            liquidGlassSegmentedSelection.dragging =
-                false
-
-
-            liquidGlassSegmentedSelection.snapToCurrent()
-        }
-    }
-
-
-    // ======================
-    // Set Current
-    // ======================
-
-    function setCurrentIndex(index) {
-
-        if (count <= 0) {
-            return
-        }
-
-
-        index =
-            clamp(
-                index,
-                0,
-                count - 1
+        var id = customId ? customId : generateId()
+
+        if (containsId(id)) {
+            console.warn(
+                "LiquidGlassSegmentedSelection:",
+                "duplicate id:",
+                id
             )
 
-
-        currentIndex =
-            index
-
-
-        var item =
-            itemAt(index)
-
-
-        if (!item) {
-            return
+            return ""
         }
 
 
-        // ======================
-        // Indicator Size
-        // ======================
-
-        indicator.width =
-            item.width
-
-
-        // ======================
-        // Indicator Position
+        // ========================================================
+        // Save the ID of the currently selected item
         //
-        // item.x is relative to segmentRow,
-        // so segmentRow.x must be added.
-        // ======================
+        // The index may no longer be reliable after appending
+        //
+        // The ID is the stable identifier
+        // ========================================================
 
-        indicator.x =
-            segmentRow.x
-            + item.x
+        var oldCurrentId = ""
 
-
-        selectionChanged(
-            index,
-            item.text
-        )
-    }
-
-
-    // ======================
-    // Snap Current
-    // ======================
-
-    function snapToCurrent() {
-        setCurrentIndex(currentIndex)
-    }
-
-
-    // ======================
-    // Snap To Nearest
-    // ======================
-
-    function snapToNearest() {
-
-        if (count <= 0) {
-            return
-        }
-
-
-        var center =
-            indicator.x
-            + indicator.width / 2
-
-
-        var bestIndex = 0
-
-        var bestDistance =
-            Number.MAX_VALUE
-
-
-        for (
-            var i = 0;
-            i < count;
-            ++i
-        ) {
-
-            var item =
-                itemAt(i)
-
-
-            if (!item) {
-                continue
-            }
-
-
-            /*
-             * item.x is relative to segmentRow.
-             *
-             * Add segmentRow.x because the Row
-             * may be centered.
-             */
-            var itemCenter =
-                segmentRow.x
-                + item.x
-                + item.width / 2
-
-
-            var distance =
-                Math.abs(
-                    center - itemCenter
-                )
-
-
-            if (
-                distance
-                <
-                bestDistance
-            ) {
-
-                bestDistance =
-                    distance
-
-
-                bestIndex =
-                    i
-            }
-        }
-
-
-        setCurrentIndex(bestIndex)
-    }
-
-
-    // ======================
-    // Model API
-    // ======================
-
-    function append(text) {
+        if (count > 0 && currentIndex >= 0 && currentIndex < count) { oldCurrentId = segmentModel.get(currentIndex).itemId }
 
         segmentModel.append({
+            "itemId": id,
             "text": text
         })
 
-
         Qt.callLater(function() {
+
+            // =======================================
+            // If an item was previously selected
+            //
+            // Keep the original item selected
+            // =======================================
+
+            if (oldCurrentId !== "") {
+                var oldIndex = indexOfId(oldCurrentId)
+                if (oldIndex >= 0) { currentIndex = oldIndex }
+            }
+
+            if (count === 1) { currentIndex = 0 }
+
             initializeIndicator()
+
+            var newIndex = indexOfId(id)
+
+            itemAdded(id, newIndex, text)
         })
+
+        return id
     }
 
 
-    function insert(index, text) {
+    // ===========
+    // Insert
+    // ===========
 
-        index =
-            clamp(
-                index,
-                0,
-                count
+
+    // ===================================================
+    // Insert an item at the specified index
+    //
+    // Returns the ID of the newly created item
+    //
+    // Returns an empty string if the operation fails
+    // ===================================================
+
+    function insert(index, text, customId) {
+        index = clamp(index, 0, count)
+
+        var newWidth = requiredWidthWithText(text)
+
+        if (newWidth > maxComponentWidth + 0.5) {
+            addRejected(text)
+            return ""
+        }
+
+        var id = customId ? customId : generateId()
+
+        if (containsId(id)) {
+            console.warn(
+                "LiquidGlassSegmentedSelection:",
+                "duplicate id:",
+                id
             )
 
+            return ""
+        }
+
+        var oldCurrentId = ""
+
+        if (count > 0 && currentIndex >= 0 && currentIndex < count) {
+            oldCurrentId = segmentModel.get(currentIndex).itemId
+        }
 
         segmentModel.insert(
             index,
             {
+                "itemId": id,
                 "text": text
             }
         )
 
-
-        if (
-            index <= currentIndex
-            &&
-            count > 1
-        ) {
-            ++currentIndex
-        }
-
-
         Qt.callLater(function() {
+            if (oldCurrentId !== "") {
+                var oldIndex = indexOfId(oldCurrentId)
+                if (oldIndex >= 0) { currentIndex = oldIndex }
+            }
+
+            if (count === 1) { currentIndex = 0 }
+
             initializeIndicator()
+
+            var newIndex = indexOfId(id)
+
+            itemAdded(id, newIndex, text)
         })
+
+        return id
     }
 
 
+    // ====================
+    // Remove By Index
+    // ====================
+
     function remove(index) {
+        if (index < 0 || index >= count) { return false }
 
-        if (
-            index < 0
-            ||
-            index >= count
-        ) {
-            return
+        var removedData = segmentModel.get(index)
+        var removedId = removedData.itemId
+        var removedText = removedData.text
+        var oldCurrentId = ""
+
+        if (count > 0 && currentIndex >= 0 && currentIndex < count) {
+            oldCurrentId = segmentModel.get(currentIndex).itemId
         }
-
 
         segmentModel.remove(index)
 
+        if (removedId === oldCurrentId) {
+            if (count <= 0) { currentIndex = 0 }
 
-        if (
-            index < currentIndex
-        ) {
-            --currentIndex
+            else {
+                currentIndex =
+                    Math.min(
+                        index,
+                        count - 1
+                    )
+            }
         }
 
+        else {
+            var newCurrentIndex = indexOfId(oldCurrentId)
 
-        if (
-            currentIndex >= count
-        ) {
+            if (newCurrentIndex >= 0) { currentIndex = newCurrentIndex }
 
-            currentIndex =
-                Math.max(
-                    0,
-                    count - 1
-                )
+            else if (count > 0) {
+                currentIndex =
+                    Math.min(
+                        currentIndex,
+                        count - 1
+                    )
+            }
+
+            else { currentIndex = 0 }
         }
-
 
         Qt.callLater(function() {
             initializeIndicator()
+            itemRemoved(removedId, index, removedText)
         })
+
+        return true
     }
 
 
-    // ======================
+    // =================
+    // Remove By ID
+    // =================
+
+    function removeById(id) {
+        var index = indexOfId(id)
+
+        if (index < 0) { return false }
+
+        return remove(index)
+    }
+
+
+    // ===================
+    // Remove By Text
+    // ===================
+
+    function removeByText(text) {
+        var index = indexOfText(text)
+
+        if (index < 0) { return false }
+
+        return remove(index)
+    }
+
+
+    // ===================
+    // Remove Current
+    // ===================
+
+    function removeCurrent() {
+        if (count <= 0) { return false }
+        return remove(currentIndex)
+    }
+
+
+    // =========================
     // Initialize Indicator
-    // ======================
+    // =========================
 
     function initializeIndicator() {
-
         Qt.callLater(function() {
-
             if (count <= 0) {
-
                 indicator.width = 0
-
                 indicator.x = 0
-
+                currentIndex = 0
                 return
             }
 
-            else if (count === 1) {
+            if (count === 1) {
+                currentIndex = 0
                 indicator.width = content.width
                 indicator.x = 0
                 return
             }
 
-
-            /*
-             * Wait until the Repeater/Row has updated
-             * its geometry.
-             */
             Qt.callLater(function() {
-                //setCurrentIndex(currentIndex)
-                currentIndex = count - 1
+                if (count <= 0) { return }
+
+                if (currentIndex < 0 || currentIndex >= count) {
+                    currentIndex =
+                        Math.max(
+                            0,
+                            Math.min(
+                                currentIndex,
+                                count - 1
+                            )
+                        )
+                }
+
                 setCurrentIndex(currentIndex)
             })
         })
     }
-
-
-    // ======================
-    // Initial Startup
-    // ======================
-
-    Component.onCompleted: {
-        initializeIndicator() }
 
 
     // ======================
@@ -1688,16 +942,27 @@ Item {
     Connections {
         target: segmentRow
 
-
         function onWidthChanged() {
-
-            if (
-                !liquidGlassSegmentedSelection.dragging
-            ) {
-
-                liquidGlassSegmentedSelection
-                    .initializeIndicator()
+            if (!liquidGlassSegmentedSelection.dragging) {
+                liquidGlassSegmentedSelection.initializeIndicator()
             }
         }
     }
+
+
+    // =========================
+    // Parent Width Changed
+    // =========================
+
+    Connections {
+        target: liquidGlassSegmentedSelection.parent
+
+        function onWidthChanged() {
+            Qt.callLater(function() {
+                liquidGlassSegmentedSelection.initializeIndicator()
+            })
+        }
+    }
+
+    Component.onCompleted: { initializeIndicator() }
 }
