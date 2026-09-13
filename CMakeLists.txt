@@ -41,6 +41,7 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/components/LiquidGlassSwitch.qml
         QML_FILES qml/components/LiquidGlassTextField.qml
         QML_FILES qml/components/LiquidGlassComboBox.qml
+        QML_FILES qml/components/LiquidGlassTerminalView.qml
 )
 
 if (APPLE)

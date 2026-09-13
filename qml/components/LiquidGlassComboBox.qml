@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
 
+// Need Change: signals -> Show Popup / Close Popup
+
 /*
  * Usage:
  *      width: 280

@@ -9,7 +9,7 @@ ApplicationWindow {
 
     width: 900
     //height: 1100
-    height: 1100
+    height: 800
 
     //minimumWidth: 200
     maximumWidth: Screen.width
@@ -29,7 +29,19 @@ ApplicationWindow {
     ColumnLayout {
         anchors.fill: parent
 
-        spacing: 0
+        spacing: 20
+
+        Comp.LiquidGlassTerminalView {
+            id: test
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
+        Comp.LiquidGlassButton {
+            onClicked: {
+                test.addError("Error")
+            }
+        }
 
         Rectangle {
             Layout.fillWidth: true
@@ -44,7 +56,7 @@ ApplicationWindow {
 
                 // initialItem:
 
-                Comp.LiquidGlassComboBox {
+                /*Comp.LiquidGlassComboBox {
                     // readOnly: true
                     width: 280
 
@@ -62,7 +74,7 @@ ApplicationWindow {
                     currentIndex: 0
 
                     onActivated: function(index) { console.log("Liquid Glass ComboBox: ", index, currentText) }
-                }
+                }*/
             }
         }
 
