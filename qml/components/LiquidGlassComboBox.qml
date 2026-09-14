@@ -2,8 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
 
-// Need Change: signals -> Show Popup / Close Popup
-
 /*
  * Usage:
  *      width: 280
@@ -16,14 +14,7 @@ import QtQuick.Window
  *          " "
  *      ]
  *
- *      currentIndex: 2
- *
- *      onActivated: function(index) {}
- *
  *      or
- *
- *      width: 300
- *      popupMaxHeight: 300
  *
  *      model: [
  *          { name: " ", code: " " },
@@ -35,7 +26,9 @@ import QtQuick.Window
  *
  *      currentIndex: 2
  *
- *      onActivated: function(index) {}
+ *      onActivated: function(index) { }
+ *      onPopupOpened: { }
+ *      onPopupClosed: { }
  */
 
 Item {
@@ -64,11 +57,12 @@ Item {
 
     signal activated(int index)
     signal currentIndexChangedByUser(int index, var value)
+    signal popupOpened()
+    signal popupClosed()
 
     id: liquidGlassComboBox
 
     implicitWidth: 240
-
     implicitHeight: 52
 
 
@@ -987,13 +981,17 @@ Item {
 
         onOpened: {
             listView.forceActiveFocus()
+            liquidGlassComboBox.popupOpened()
 
             if (liquidGlassComboBox.currentIndex >= 0) {
                 listView.positionViewAtIndex(liquidGlassComboBox.currentIndex, ListView.Contain)
             }
         }
 
-        onClosed: { liquidGlassComboBox.forceActiveFocus() }
+        onClosed: {
+            liquidGlassComboBox.forceActiveFocus()
+            liquidGlassComboBox.popupClosed()
+        }
     }
 
     onModelChanged: { synchronizeModel() }
