@@ -728,8 +728,6 @@ Rectangle {
     // =========================================================
 
     function addText(text, type) {
-        commandInput.enabled = false
-
         const lines = text.split("\n")
 
         for (let i = 0; i < lines.length; ++i) {
@@ -745,7 +743,6 @@ Rectangle {
         if (terminalView.b_autoScroll)
             outputView.scrollToBottom()
 
-        commandInput.enabled = true
     }
 
 
@@ -783,13 +780,34 @@ Rectangle {
     // Execute Command
     // =========================================================
 
-    function executeCommand() {
+    function executeCommand2() {
 
         const command =
             commandInput.text.trim()
 
         if (command.length === 0)
             return
+
+        addNewCommandLine(command)
+
+        commandInput.clear()
+
+        commandEntered(command)
+    }
+
+    function executeCommand() {
+
+        const command =
+            commandInput.text.trim()
+
+        console.log("Command: ", command)
+
+        if (command.length === 0)
+            return
+
+        if (command.endsWith("\\")) {
+            console.log("Yes")
+        }
 
         addNewCommandLine(command)
 
@@ -859,9 +877,9 @@ Rectangle {
             // 再次启动
             start()
         }
-    }
+    }*/
 
-    Timer {
+    /*Timer {
         id: debugTimer2
 
         interval: Math.floor(Math.random() * 200) + 100
