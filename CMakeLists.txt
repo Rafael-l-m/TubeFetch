@@ -43,6 +43,10 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/components/LiquidGlassComboBox.qml
         QML_FILES qml/components/LiquidGlassTerminalView.qml
         QML_FILES qml/pages/mainpage/MainPage.qml
+        QML_FILES qml/download/DownloadList.qml
+        QML_FILES qml/download/DownloadDelegate.qml
+        QML_FILES qml/components/MarqueeText.qml
+        QML_FILES qml/components/LiquidGlassActionButton.qml
 )
 
 if (APPLE)

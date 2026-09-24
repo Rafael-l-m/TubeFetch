@@ -9,25 +9,19 @@ ApplicationWindow {
     visible: true
 
     width: 900
-    //height: 1100
-    height: 400
+    height: 700
 
-    //minimumWidth: 200
+    minimumWidth: 700
+    minimumHeight: 400
+
     maximumWidth: Screen.width
-    //minimumHeight: 250
     maximumHeight: Screen.height
 
-    title: qsTr("Hello World")
-
-    property bool lightMode: Application.styleHints.colorScheme === Qt.Light
-    property color reallyDark: "#1f1f1f"
-    property color dark: "#262626"
-    property color reallyLight: "#e7e7e7"
-    property color light: "#e0e0e0"
+    title: qsTr("TubeFetch (v3.0.0)")
 
     Comp.Background { }
 
-    ColumnLayout {
+    /* ColumnLayout {
         anchors.fill: parent
 
         spacing: 20
@@ -51,7 +45,7 @@ ApplicationWindow {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height * 0.15
+            Layout.preferredHeight: parent.height * 0.1
 
             color: "transparent"
 
@@ -74,6 +68,16 @@ ApplicationWindow {
 
                 onItemRemoved: function(id, index, text) { }
             }
+        }
+    } */
+
+    StackView {
+        id: mainStackView
+
+        anchors.fill: parent
+
+        initialItem: Mp.MainPage {
+            id: mainPage
         }
     }
 }

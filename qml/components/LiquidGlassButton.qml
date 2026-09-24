@@ -214,7 +214,7 @@ Item {
 
             color: liquidGlassButton.pressed ? Qt.rgba(1, 1, 1, 0.62) : Qt.rgba(1, 1, 1, 0.96)
 
-            font.pixelSize: liquidGlassButton.pressed ? 15 : 16
+            font.pixelSize: liquidGlassButton.pressed ? 11 : 13
             font.weight: liquidGlassButton.pressed
                             ? Font.Bold
                             : (liquidGlassButton.hovered
