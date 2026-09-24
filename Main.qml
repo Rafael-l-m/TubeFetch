@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "qml/components" as Comp
+import "qml/pages/mainpage" as Mp
 
 ApplicationWindow {
     id: window
@@ -42,8 +43,9 @@ ApplicationWindow {
 
                 anchors.fill: parent
 
-                // initialItem:
+                initialItem: Mp.MainPage {
 
+                }
             }
         }
 

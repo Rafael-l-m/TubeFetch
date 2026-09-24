@@ -14,7 +14,7 @@ Rectangle {
     property alias p_ColumnLayout_ListView: outputView
     property alias p_ColumnLayout_ListView_ScrollBar: scrollBar
     property alias p_ColumnLayout_ListView_ScrollBar_background_Rectangle: scrollBar_backgroud_Rectangle
-    property alias p_ColumnLayout_ListView_ScrollBar_contentItem_Rectangle: scrollBar_contentItem_Rectangle
+    //property alias p_ColumnLayout_ListView_ScrollBar_contentItem_Rectangle: scrollBar_contentItem_Rectangle
     property alias p_ColumnLayout_Item: commandArea
     property alias p_ColumnLayout_Item_RowLayout: commandArea_RowLayout
     property alias p_ColumnLayout_Item_RowLayout_Text: commandArea_RowLayout_Text
@@ -22,7 +22,7 @@ Rectangle {
     property alias p_ListModel: terminalModel
 
     property bool b_autoScroll: true
-    property int i_maxLines: 100000
+    property int i_maxLines: 10000
 
     signal commandEntered(string command)
 
@@ -78,7 +78,6 @@ Rectangle {
         id: columnLayout
 
         anchors.fill: parent
-
         anchors.margins: 10
 
         spacing: 8
@@ -105,11 +104,8 @@ Rectangle {
             cacheBuffer: 2000
 
 
-            function isAtBottom() {
-                return contentHeight <= height ||
-                       contentY >= contentHeight - height - 60
-            }
 
+            function isAtBottom() { return contentHeight <= height || contentY >= contentHeight - height - 200 }
 
             function scrollToBottom() {
 
@@ -268,7 +264,6 @@ Rectangle {
 
                 width: 7
 
-
                 background: Rectangle {
                     id: scrollBar_backgroud_Rectangle
 
@@ -276,7 +271,6 @@ Rectangle {
 
                     color: "transparent"
                 }
-
 
                 contentItem: Rectangle {
                     id: scrollBar_contentItem_Rectangle
@@ -399,7 +393,7 @@ Rectangle {
 
                 height: parent.height * 0.45
 
-                radius: 11
+                radius: 12
 
                 gradient: Gradient {
 
@@ -436,7 +430,7 @@ Rectangle {
 
                     text: ">>"
 
-                    Layout.alignment: Qt.AlignTop
+                    Layout.alignment: Qt.AlignVCenter
 
                     font.family: "Menlo"
                     font.pixelSize: 10
@@ -449,8 +443,11 @@ Rectangle {
                 TextArea {
                     id: commandInput
 
+                    readonly property bool isMultiline: commandInput.lineCount > 1
+
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    //Layout.alignment: Qt.AlignVCenter
 
                     background: null
 
@@ -458,8 +455,9 @@ Rectangle {
 
                     leftPadding: 0
                     rightPadding: 0
-                    topPadding: 5
-                    bottomPadding: 5
+                    //topPadding: 9
+                    topPadding: !isMultiline ? 9 : 4
+                    //bottomPadding: 5
 
                     wrapMode: TextEdit.Wrap
 
@@ -492,7 +490,7 @@ Rectangle {
             Rectangle {
                 anchors.fill: parent
 
-                radius: parent.radius
+                radius: 12
 
                 color: "transparent"
 
@@ -701,8 +699,9 @@ Rectangle {
         const excess =
             terminalModel.count - i_maxLines
 
-        if (excess > 0)
+        if (excess > 0) {
             terminalModel.remove(0, excess)
+        }
     }
 
 
@@ -729,6 +728,7 @@ Rectangle {
     // =========================================================
 
     function addText(text, type) {
+        commandInput.enabled = false
 
         const lines = text.split("\n")
 
@@ -744,6 +744,8 @@ Rectangle {
 
         if (terminalView.b_autoScroll)
             outputView.scrollToBottom()
+
+        commandInput.enabled = true
     }
 
 
@@ -813,4 +815,121 @@ Rectangle {
     Component.onCompleted: {
         commandInput.forceActiveFocus()
     }
+
+    /*Timer {
+        id: debugTimer
+
+        interval: Math.floor(Math.random() * 200) + 100
+        repeat: false
+        running: true
+
+        onTriggered: {
+            var functions = [
+                addDebug,
+                addInfo,
+                addWarning,
+                addError,
+                addOutput
+            ]
+
+            var messages = [
+                "Connection established",
+                "Loading configuration...",
+                "Request received",
+                "Processing data...",
+                "Task completed",
+                "Warning: unexpected response",
+                "Error: connection timeout",
+                "Output generated successfully",
+                "Debug information available",
+                "Waiting for next command..."
+            ]
+
+            // 随机 function
+            var fn = functions[Math.floor(Math.random() * functions.length)]
+
+            // 随机内容
+            var text = messages[Math.floor(Math.random() * messages.length)]
+
+            fn(text)
+
+            // 下一次随机时间
+            interval = Math.floor(Math.random() * 200) + 100
+
+            // 再次启动
+            start()
+        }
+    }
+
+    Timer {
+        id: debugTimer2
+
+        interval: Math.floor(Math.random() * 200) + 100
+        repeat: false
+        running: true
+
+        onTriggered: {
+            var functions = [
+                addDebug,
+                addInfo,
+                addWarning,
+                addError,
+                addOutput
+            ]
+
+            var messages = [
+                "1"
+            ]
+
+            // 随机 function
+            var fn = functions[Math.floor(Math.random() * functions.length)]
+
+            // 随机内容
+            var text = messages[Math.floor(Math.random() * messages.length)]
+
+            fn(text)
+
+            // 下一次随机时间
+            interval = Math.floor(Math.random() * 200) + 100
+
+            // 再次启动
+            start()
+        }
+    }
+
+    Timer {
+        id: debugTimer3
+
+        interval: Math.floor(Math.random() * 200) + 100
+        repeat: false
+        running: true
+
+        onTriggered: {
+            var functions = [
+                addDebug,
+                addInfo,
+                addWarning,
+                addError,
+                addOutput
+            ]
+
+            var messages = [
+                "2"
+            ]
+
+            // 随机 function
+            var fn = functions[Math.floor(Math.random() * functions.length)]
+
+            // 随机内容
+            var text = messages[Math.floor(Math.random() * messages.length)]
+
+            fn(text)
+
+            // 下一次随机时间
+            interval = Math.floor(Math.random() * 200) + 100
+
+            // 再次启动
+            start()
+        }
+    }*/
 }
