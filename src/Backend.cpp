@@ -440,10 +440,13 @@ void Backend::askAudioFilters() { emit filtersAsked(MediaCodecFilters::audioFilt
 
 void Backend::askVideoFilters() { emit filtersAsked(MediaCodecFilters::videoFilters); }
 
-void Backend::checkAvailablePath(const QUrl& path) {
-    const auto realPath = path.toLocalFile().trimmed();
-    emit availablePathChecked(ToolsManager::checkPathWritable(realPath), realPath);
+void Backend::checkAvailablePath(const QUrl& path) { this->checkAvailablePath(path.toLocalFile().trimmed()); }
+
+void Backend::checkAvailablePath(const QString& path) {
+    const auto pathTrimmed = path.trimmed();
+    emit availablePathChecked(ToolsManager::checkPathWritable(pathTrimmed), pathTrimmed);
 }
+
 
 void Backend::addNewDownload(
     const QString& url,
@@ -944,11 +947,24 @@ void Backend::getUrlInfo(const QString& url) {
         const auto _info = info[JSON_FORMAT::INFO].toString();
         const auto _obj = QJsonDocument::fromJson(_info.toUtf8()).object();
 
+        qDebug() << _obj;
+
         if (_info.isEmpty()) { this->m_urlInfoManager->getInfo(urlTrimmed); }
 
         else { this->m_urlInfoManager->analyzeUrlInfo(_obj); }
     });
 }
+
+Q_INVOKABLE void Backend::cleanDownloadUrlInfo() {
+    constexpr qint64 retentionTime = 24 * 60 * 60;
+
+    const qint64 threshold = QDateTime::currentSecsSinceEpoch() - retentionTime;
+
+    this->m_client->removeUselessDownloadUrlInfo(threshold, [this](const QJsonObject& obj){
+        qDebug() << obj;
+    });
+}
+
 
 
 // Update Checker

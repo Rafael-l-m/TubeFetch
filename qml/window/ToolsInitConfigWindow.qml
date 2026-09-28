@@ -16,8 +16,8 @@ ApplicationWindow {
     width: 950
     height: 450
 
-    minimumWidth: 900
-    maximumWidth: 900
+    minimumWidth: 950
+    maximumWidth: 950
 
     minimumHeight: 450
     maximumHeight: 450

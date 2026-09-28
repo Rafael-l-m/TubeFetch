@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE void askAudioFilters();
     Q_INVOKABLE void askVideoFilters();
     Q_INVOKABLE void checkAvailablePath(const QUrl& path);
+    Q_INVOKABLE void checkAvailablePath(const QString& path);
     Q_INVOKABLE void addNewDownload(
         const QString& url,
         const QString& title,
@@ -107,6 +108,8 @@ public:
     Q_INVOKABLE void isValidUrl(const QString& url);
     Q_INVOKABLE void cutUrl(const QString& url);
     Q_INVOKABLE void getUrlInfo(const QString& url);
+    Q_INVOKABLE void cleanDownloadUrlInfo();
+
 
     // Update Checker
     Q_INVOKABLE static void visitRepo();

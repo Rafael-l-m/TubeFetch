@@ -97,6 +97,7 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/components/Toast.qml
         QML_FILES
         QML_FILES qml/window/ToolsInitConfigWindow.qml
+        QML_FILES qml/window/ShowCodecsWindow.qml
 )
 
 if (APPLE)

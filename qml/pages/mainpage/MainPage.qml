@@ -8,7 +8,7 @@ Rectangle {
 
     color: "transparent"
 
-    Component.onCompleted: {} // backend.loadSettings(); }
+    Component.onCompleted: { }//backend.loadSettings(); }
 
     ColumnLayout {
         id: columnLayout

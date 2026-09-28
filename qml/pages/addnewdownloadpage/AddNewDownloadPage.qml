@@ -8,6 +8,7 @@ import "../../components" as Comp
 Rectangle {
     property bool editMode: false
 
+    property var internalIdd
     property string audioItag: ""
     property string videoItag: ""
     property string nonDashItag: ""
@@ -27,6 +28,8 @@ Rectangle {
         maximumTouchPoints: 1
         onReleased: (points) => { if (points[0].x - points[0].startX > 120) { mainStackView.pop() } }
     }
+
+    Component.onCompleted: { backend.cleanDownloadUrlInfo(); }
 
     ColumnLayout {
         id: columnLayout
@@ -72,6 +75,8 @@ Rectangle {
                     placeholderText: qsTr("Enter download address ...")
 
                     onTextChanged: {
+                        if (background.editMode) { return }
+
                         const newContent = textFieldURL.text.trim()
 
                         if (newContent.length === 0) {
@@ -100,17 +105,17 @@ Rectangle {
                 Comp.LiquidGlassButton {
                     id: searchInfoBtn
 
-                    text: remainingSeconds > 0 ? "0" + Math.floor(remainingSeconds / 60) + ":" +
-                            (remainingSeconds % 60).toString().padStart(2, "0") : qsTr("Search Info")
+                    text: remainingSeconds1 > 0 ? "0" + Math.floor(remainingSeconds1 / 60) + ":" +
+                            (remainingSeconds1 % 60).toString().padStart(2, "0") : qsTr("Search Info")
 
-                    enabled: remainingSeconds === 0 && textFieldURL.text.trim().length > 0
+                    enabled: remainingSeconds1 === 0 && textFieldURL.text.trim().length > 0
 
                     implicitWidth: 160
 
                     onClicked: {
+                        remainingSeconds1 = 60 * 2
+                        countdownTimer1.start()
                         backend.isValidUrl(textFieldURL.text.trim())
-                        remainingSeconds = 120
-                        countdownTimer.start()
                     }
                 }
 
@@ -135,6 +140,24 @@ Rectangle {
                     font.pixelSize: 14
 
                     readOnly: true
+                }
+
+                Comp.LiquidGlassButton {
+                    id: showCodecBtn
+
+                    text: remainingSeconds2 > 0 ? "0" + Math.floor(remainingSeconds2 / 60) + ":" +
+                            (remainingSeconds2 % 60).toString().padStart(2, "0") : qsTr("Show Codecs")
+
+                    implicitWidth: 160
+
+                    enabled: remainingSeconds2 === 0 && textFieldTitle.text.trim().length > 0
+
+                    onClicked: {
+                        remainingSeconds2 = 5 * 60
+                        countdownTimer2.start()
+                        backend.showCodecs(textFieldURL.text.trim())
+                        windowManager.switchToIndependentWindow("ShowCodecsWindow.qml")
+                    }
                 }
             }
 
@@ -190,65 +213,70 @@ Rectangle {
                     Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                 }
 
-                Row {
-                    spacing: 25
+                Comp.LiquidGlassComboBox {
+                    id: modeComboBox
 
-                    Comp.LiquidGlassComboBox {
-                        id: modeComboBox
+                    fontsize: 14
 
-                        fontsize: 14
+                    popupMaxHeight: 150
 
-                        popupMaxHeight: 150
+                    model: [qsTr("Best Video"), qsTr("Best Audio"), qsTr("Personalized")]
 
-                        model: [qsTr("Best Video"), qsTr("Best Audio"), qsTr("Personalized")]
+                    onActivated: {
+                        console.log("Model changed, index: ", currentIndex, currentText)
 
-                        onActivated: {
-                            console.log("Model changed, index: ", currentIndex, currentText)
+                        if (modeComboBox.currentIndex !== 2) {
+                            audioCodecComboBox.visible = false
+                            videoCodecComboBox.visible = false
+                            nonDashCodecComboBox.visible = false
                         }
 
-                        onPopupOpened: {
-                            if (modeComboBox.currentIndex !== 2) {
-                                metadataCodecComboBox.visible = false
-                                subtitlesCodecComboBox.visible = false
-                                hideMode4.visible = true
-                                hideMode5.visible = true
-                            }
-
-                            else {
-                                videoCodecComboBox.visible = false
-                                audioCodecComboBox.visible = false
-                                hideMode1.visible = true
-                                hideMode2.visible = true
-                            }
+                        else {
+                            audioCodecComboBox.visible = true
+                            videoCodecComboBox.visible = true
+                            nonDashCodecComboBox.visible = true
                         }
 
-                        onPopupClosed: {
-                            if (modeComboBox.currentIndex !== 2) {
-                                metadataCodecComboBox.visible = true
-                                subtitlesCodecComboBox.visible = true
-                                hideMode4.visible = false
-                                hideMode5.visible = false
-                            }
+                        metadataCodecComboBox.visible = true
+                        subtitlesCodecComboBox.visible = true
+                        hideMode1.visible = false
+                        hideMode2.visible = false
+                        hideMode3.visible = false
+                        hideMode4.visible = false
+                        hideMode5.visible = false
+                        hideMode6.visible = false
+                    }
 
-                            else {
-                                videoCodecComboBox.visible = true
-                                audioCodecComboBox.visible = true
-                                hideMode1.visible = false
-                                hideMode2.visible = false
-                            }
+                    onPopupOpened: {
+                        if (modeComboBox.currentIndex !== 2) {
+                            metadataCodecComboBox.visible = false
+                            subtitlesCodecComboBox.visible = false
+                            hideMode4.visible = true
+                            hideMode5.visible = true
+                        }
+
+                        else {
+                            videoCodecComboBox.visible = false
+                            audioCodecComboBox.visible = false
+                            hideMode1.visible = true
+                            hideMode2.visible = true
                         }
                     }
 
-                    Comp.LiquidGlassButton {
-                        id: showCodecBtn
+                    onPopupClosed: {
+                        if (modeComboBox.currentIndex !== 2) {
+                            metadataCodecComboBox.visible = true
+                            subtitlesCodecComboBox.visible = true
+                            hideMode4.visible = false
+                            hideMode5.visible = false
+                        }
 
-                        text: qsTr("Show Codecs")
-
-                        implicitHeight: 52
-
-                        enabled: textFieldTitle.text.trim().length > 0
-
-                        visible: modeComboBox.currentIndex === 2
+                        else {
+                            videoCodecComboBox.visible = true
+                            audioCodecComboBox.visible = true
+                            hideMode1.visible = false
+                            hideMode2.visible = false
+                        }
                     }
                 }
 
@@ -278,20 +306,12 @@ Rectangle {
 
                     visible: modeComboBox.currentIndex === 2
 
+                    enabled: nonDashCodecComboBox.currentIndex === 0
+
                     model: [qsTr("None")]
-                    // change gridLayout to rowlayout is possible
-                    // when access -> autoclean
+
                     onActivated: {
                         console.log("Model changed, index: ", currentIndex, currentText)
-
-                        metadataCodecComboBox.visible = true
-                        subtitlesCodecComboBox.visible = true
-                        hideMode1.visible = false
-                        hideMode2.visible = false
-                        hideMode3.visible = false
-                        hideMode4.visible = false
-                        hideMode5.visible = false
-                        hideMode6.visible = false
                     }
 
                     onPopupOpened: {
@@ -334,6 +354,8 @@ Rectangle {
                     popupMaxHeight: 150
 
                     visible: modeComboBox.currentIndex === 2
+
+                    enabled: nonDashCodecComboBox.currentIndex === 0
 
                     model: [qsTr("None")]
 
@@ -381,6 +403,8 @@ Rectangle {
                     popupMaxHeight: 150
 
                     visible: modeComboBox.currentIndex === 2
+
+                    enabled: audioCodecComboBox.currentIndex === 0 && videoCodecComboBox.currentIndex === 0
 
                     model: [qsTr("None")]
 
@@ -468,14 +492,14 @@ Rectangle {
 
                     onPopupOpened: {
                         if (modeComboBox.currentIndex === 2) {
-                            saveAsField.visible = false
+                            textFieldSaveAs.visible = false
                             hideMode6.visible = true
                         }
                     }
 
                     onPopupClosed: {
                         if (modeComboBox.currentIndex === 2) {
-                            saveAsField.visible = true
+                            textFieldSaveAs.visible = true
                             hideMode6.visible = false
                         }
                     }
@@ -535,11 +559,13 @@ Rectangle {
                 }
 
                 Comp.LiquidGlassTextField {
-                    id: saveAsField
+                    id: textFieldSaveAs
 
                     implicitWidth: 500
 
                     font.pixelSize: 12
+
+                    readOnly: true
                 }
 
                 Comp.LiquidGlassTextField { id: hideMode6; opacity: 0.1; implicitWidth: 500; font.pixelSize: 12; visible: false }
@@ -551,6 +577,13 @@ Rectangle {
 
                     implicitWidth: 160
                     implicitHeight: 50
+
+                    onClicked: {
+                        if (checkRequirements()) {
+                            askFilters()
+                            saveAs.open()
+                        }
+                    }
                 }
             }
 
@@ -603,27 +636,137 @@ Rectangle {
                 text: qsTr("Continue")
 
                 implicitWidth: 260
+
+                enabled:
+                    textFieldURL.text.trim().length > 0
+                        && textFieldTitle.text.trim().length > 0
+                            && textFieldSaveAs.text.trim().length > 0
+
+                onClicked: {
+                    saveAsBtn.enabled = false
+                    backBtn.enabled = false
+
+                    const url = textFieldURL.text.trim()
+                    const title = textFieldTitle.text.trim()
+                    const modeIdx = modeComboBox.currentIndex
+                    const ba = modeIdx === 1
+                    const bv = modeIdx === 0
+
+                    let ac = ""; let vc = ""; let ndc = ""
+
+                    if (modeIdx === 2) {
+                        ac = (audioCodecComboBox.currentIndex === 0) ? "" : audioCodecComboBox.currentText.trim()
+                        vc = (videoCodecComboBox.currentIndex === 0) ? "" : videoCodecComboBox.currentText.trim()
+                        ndc = (nonDashCodecComboBox.currentIndex === 0) ? "" : nonDashCodecComboBox.currentText.trim()
+                    }
+
+                    const sp = textFieldSaveAs.text.trim()
+
+                    if (sp.length === 0) {
+                        toast.show("Requires an output path")
+                        return
+                    }
+
+                    const met = metadataCodecComboBox.currentIndex === 1
+                    const subt = subtitlesCodecComboBox.currentIndex === 1
+
+                    loading.running = true
+                    loading.visible = true
+
+                    if (background.editMode) {
+                        backend.editDownload(
+                            background.internalIdd,
+                            url,
+                            title,
+                            ac,
+                            vc,
+                            ndc,
+                            ba,
+                            bv,
+                            sp,
+                            sp,
+                            met,
+                            subt
+                        )
+                    }
+
+                    else {
+                        backend.addNewDownload(
+                            url,
+                            title,
+                            ac,
+                            vc,
+                            ndc,
+                            ba,
+                            bv,
+                            sp,
+                            sp,
+                            met,
+                            subt
+                        )
+                    }
+                }
             }
 
             Item { Layout.fillWidth: true }
         }
     }
 
-    property int remainingSeconds: 0
+
+    // ============================
+    // Timer for "Search Info"
+    // ============================
+
+    property int remainingSeconds1: 0
 
     Timer {
-        id: countdownTimer
+        id: countdownTimer1
 
         interval: 1000
 
         repeat: true
 
         onTriggered: {
-            if (remainingSeconds > 0) { --remainingSeconds }
-
-            if (remainingSeconds === 0) { countdownTimer.stop() }
+            if (remainingSeconds1 > 0) { --remainingSeconds1 }
+            if (remainingSeconds1 === 0) { countdownTimer1.stop() }
         }
     }
+
+
+    // ============================
+    // Timer for "Show Codecs"
+    // ============================
+
+    property int remainingSeconds2: 0
+
+    Timer {
+        id: countdownTimer2
+
+        interval: 1000
+
+        repeat: true
+
+        onTriggered: {
+            if (remainingSeconds2 > 0) { --remainingSeconds2 }
+            if (remainingSeconds2 === 0) { countdownTimer2.stop() }
+        }
+    }
+
+    // ==
+    // Delay Timer: search info after waiting 3 s in editMode
+    // NECCESAARRY
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
+     // ==========================================
 
     FileDialog {
         id: saveAs
@@ -636,27 +779,75 @@ Rectangle {
             loading.running = true
             loading.visible = true
 
+            disableInnecessaryComponents()
             backend.checkAvailablePath(saveAs.selectedFile)
-        }
-    }
-
-    Comp.MessageDialog {
-        id: showBeforeChooseSavePath
-
-        width: 450
-        height: 220
-
-        messageText: qsTr("After selecting the file save path, the previous options can no longer be modified\n\nThey can still be adjusted later\n\n**This prompt can be turned off in the settings\n\nAre you sure you want to proceed?")
-
-        onAccepted: {
-            // beforeSaving()
-            saveAs.open()
         }
     }
 
     Comp.Toast { id: toast }
 
     Comp.LoadingOverlay { id: loading; r_overlayWidth: background.width; r_overlayHeight: background.height }
+
+    function disableInnecessaryComponents() {
+        textFieldURL.readOnly = true
+        remainingSeconds1 = 0
+        countdownTimer1.stop()
+        searchInfoBtn.enabled = false
+        textFieldTitle.readOnly = true
+        remainingSeconds2 = 0
+        countdownTimer2.stop()
+        showCodecBtn.enabled = false
+        modeComboBox.readOnly = true
+        audioCodecComboBox.readOnly = true
+        videoCodecComboBox.readOnly = true
+        nonDashCodecComboBox.readOnly = true
+        metadataCodecComboBox.readOnly = true
+        subtitlesCodecComboBox.readOnly = true
+    }
+
+    function checkRequirements() {
+        const url = textFieldURL.text.trim()
+
+        if (url.length === 0) { toast.show(qsTr("A URL is required before choosing the save path")); return false }
+
+        const title = textFieldTitle.text.trim()
+
+        if (title.length === 0 || title === qsTr("Failed")) { toast.show(qsTr("A title is required before choosing the save path")); return false }
+
+        const modeIdx = modeComboBox.currentIndex
+
+        if (modeIdx === 0 || modeIdx === 1) { return true }
+
+        const audioIdx = audioCodecComboBox.currentIndex
+        const videoIdx = videoCodecComboBox.currentIndex
+        const nonDashIdx = nonDashCodecComboBox.currentIndex
+
+        if ((audioIdx === 0 && nonDashIdx === 0)
+                || (audioIdx === 0 && videoIdx === 0 && nonDashIdx === 0))
+        {
+            toast.show(qsTr("An audio code is required before choosing the save path"))
+            return false
+        }
+
+        return true
+    }
+
+    function askFilters() {
+        const modeIdx = modeComboBox.currentIndex
+
+        if (modeIdx === 0) { backend.askVideoFilters() }
+
+        else if (modeIdx === 1) { backend.askAudioFilters() }
+
+        else {
+            const videoCodecIdx = videoCodecComboBox.currentIndex
+            const nonDashIdx = nonDashCodecComboBox.currentIndex
+
+            if (nonDashIdx !== 0) { backend.askVideoFilters() }
+
+            else { if (videoCodecIdx === 0) { backend.askAudioFilters() } else { backend.askVideoFilters() } }
+        }
+    }
 
     Connections {
         target: backend
@@ -731,7 +922,7 @@ Rectangle {
             loading.visible = false
             loading.running = false
 
-            if (ok) { r3.p_GridLayout_InputField.text = path }
+            if (ok) { textFieldSaveAs.text = path }
 
             else { toast.show(qsTr("Invalid Save Path: is not writable")) }
         }
@@ -742,55 +933,58 @@ Rectangle {
 
             if (accepted) { Qt.callLater(function() { windowManager.backToMainWindow() }) }
 
-            else { toast.show(message) }
+            else { toast.show(message); backBtn.enabled = true }
         }
 
         function onEditInformationRequest(obj, message) {
-            if (addNewDownloadPage.b_editMode && addNewDownloadPage.qint64_internalId !== 0 && obj.internalId === qint64_internalId) {
-                r1.p_GridLayout_InputFieldURL.text = obj.url.trim()
-                r1.p_GridLayout_InputFieldURL.readOnly = true
-                r1.p_GridLayout_InputFieldTitle.text = obj.title.trim()
+            if (background.editMode && background.internalIdd !== 0 && obj.internalId === background.internalIdd) {
+                textFieldURL.text = obj.url.trim()
+                textFieldURL.readOnly = true
+                searchInfoBtn.enabled = false
+                textFieldTitle.text = obj.title.trim()
+                showCodecBtn.enabled = false
 
-                if (obj.bestAudio) { r2.p_GridLayout_Row_ChooseComboBox.currentIndex = 1 }
+                if (obj.bestAudio) { modeComboBox.currentIndex = 1 }
 
-                else if (obj.bestVideo) { r2.p_GridLayout_Row_ChooseComboBox.currentIndex = 0 }
+                else if (obj.bestVideo) { modeComboBox.currentIndex = 0 }
 
                 else {
-                    r2.p_GridLayout_Row_ChooseComboBox.currentIndex = 2
-                    r2.p_GridLayout_Row_PushButton.enabled = true
+                    modeComboBox.currentIndex = 2
+
+                    /*r2.p_GridLayout_Row_PushButton.enabled = true
                     r2.p_GridLayout_Row_PushButton.visible = true
                     r2.p_GridLayout_LabelAudioCodec.visible = true
                     r2.p_GridLayout_ChooseComboBoxAudioCodec.visible = true
                     r2.p_GridLayout_LabelVideoCodec.visible = true
                     r2.p_GridLayout_ChooseComboBoxVideoCodec.visible = true
                     r2.p_GridLayout_LabelNonDashCodec.visible = true
-                    r2.p_GridLayout_ChooseComboBoxNonDash.visible = true
+                    r2.p_GridLayout_ChooseComboBoxNonDash.visible = true*/
 
-                    s_audioItag = obj.audioCode.trim()
-                    s_videoItag = obj.videoCode.trim()
-                    s_nonDashItag = obj.nonDashCode.trim()
+                    background.audioItag = obj.audioCode.trim()
+                    background.videoItag = obj.videoCode.trim()
+                    background.nonDashItag = obj.nonDashCode.trim()
                 }
 
-                addNewDownloadPage.s_pendingUrl = obj.url.trim()
-                delayTimer.restart()
+                backend.getUrlInfo(textFieldURL.text.trim())
+                // ==========================================
+                 // ========================================== // ==========================================
+                 // ==========================================
+                 // ==========================================
+                 // ==========================================
+                 // ==========================================
+                 // ==========================================
+                 // ==========================================
 
-                r2.p_GridLayout_ChooseComboBoxMetadata.currentIndex = (obj.metadata ? 1 : 0)
-                r2.p_GridLayout_ChooseComboBoxSubtitles.currentIndex = 0
-                r3.p_GridLayout_InputField.text = obj.savePath
 
-                addNewDownloadPage.b_showInfoBeforeSaving = false
+                metadataCodecComboBox.currentIndex = (obj.metadata ? 1 : 0)
+                subtitlesCodecComboBox.currentIndex = (obj.subtitles ? 1 : 0)
+                textFieldSaveAs.text = obj.savePath.trim()
 
                 loading.running = true
                 loading.visible = true
             }
 
             else { toast.show(message) }
-        }
-
-        function onPossiblePerform(ok) {
-            if (addNewDownloadPage.b_enableRateLimit) { addNewDownloadPage.b_canPerform = ok; }
-
-            if (!ok && addNewDownloadPage.b_enableRateLimit) { toast.show(qsTr("You have reached the limit. Please wait at least one hour before trying again.")) }
         }
     }
 }

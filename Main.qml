@@ -10,9 +10,9 @@ ApplicationWindow {
     visible: true
 
     width: 1000
-    height: 1000
+    height: 960
 
-    minimumWidth: 900
+    minimumWidth: 940
     minimumHeight: 960
 
     maximumWidth: Screen.width
