@@ -47,6 +47,56 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/download/DownloadDelegate.qml
         QML_FILES qml/components/MarqueeText.qml
         QML_FILES qml/components/LiquidGlassActionButton.qml
+        SOURCES include/core/Constants.hpp
+        SOURCES include/core/BasicTools.hpp
+        SOURCES include/update/UpdateChecker.hpp
+        SOURCES src/update/UpdateChecker.cpp
+        SOURCES include/core/APP.hpp
+        SOURCES include/core/MessageCenter.hpp
+        SOURCES include/core/SingleAppProtection.hpp
+        SOURCES src/core/SingleAppProtection.cpp
+        SOURCES include/WindowManager.hpp
+        SOURCES src/WindowManager.cpp
+        SOURCES include/db/Operation.hpp
+        SOURCES include/db/Specification.hpp
+        SOURCES include/db/DataBase.hpp
+        SOURCES src/db/DataBase.cpp
+        SOURCES include/db/DbRequest.hpp
+        SOURCES include/download/Download.hpp
+        SOURCES include/download/DownloadStatus.hpp
+        SOURCES include/download/DownloadUrlInfo.hpp
+        SOURCES include/db/DbManager.hpp
+        SOURCES src/db/DbManager.cpp
+        SOURCES include/db/DbServer.hpp
+        SOURCES src/db/DbServer.cpp
+        SOURCES include/Backend.hpp
+        SOURCES src/Backend.cpp
+        SOURCES include/db/DbClient.hpp
+        SOURCES src/db/DbClient.cpp
+        SOURCES include/tools/Tools.hpp
+        SOURCES include/tools/ToolsManager.hpp
+        SOURCES src/tools/ToolsManager.cpp
+        SOURCES include/provider/ProviderManager.hpp
+        SOURCES src/provider/ProviderManager.cpp
+        SOURCES include/SharedStorage.hpp
+        SOURCES include/download/DownloadModel.hpp
+        SOURCES src/download/DownloadModel.cpp
+        SOURCES include/url/URLInfoManager.hpp
+        SOURCES src/url/URLInfoManager.cpp
+        QML_FILES qml/pages/addnewdownloadpage/AddNewDownloadPage.qml
+        SOURCES include/download/ProcessPool.hpp
+        SOURCES src/download/ProcessPool.cpp
+        SOURCES include/download/DownloadWorker.hpp
+        SOURCES src/download/DownloadWorker.cpp
+        SOURCES include/download/DownloadManager.hpp
+        SOURCES src/download/DownloadManager.cpp
+        QML_FILES qml/components/LoadingOverlay.qml
+        QML_FILES qml/components/DownloadFileDialog.qml
+        QML_FILES qml/components/HighlightText.qml
+        QML_FILES qml/components/MessageDialog.qml
+        QML_FILES qml/components/Toast.qml
+        QML_FILES
+        QML_FILES qml/window/ToolsInitConfigWindow.qml
 )
 
 if (APPLE)

@@ -47,6 +47,7 @@ Item {
     property real popupMaxHeight: 200
     property real itemHeight: 42
     property real popupPadding: 5
+    property real fontsize: font.pixelSize
 
     property color accentColor: Qt.rgba(0.45, 0.72, 1.0, 1.0)
     property bool readOnly: false
@@ -388,7 +389,7 @@ Item {
 
         text: "◈"
 
-        font.pixelSize: 12
+        // font.pixelSize: 12
 
         color: Qt.rgba(0.75, 0.84, 1.0, 0.48)
 
@@ -434,8 +435,7 @@ Item {
                             ? Qt.rgba(1, 1, 1, 0.96)
                             : Qt.rgba(1, 1, 1, 0.40)
 
-        font.pixelSize: 16
-
+        // font.pixelSize: 16
         font.weight: liquidGlassComboBox.readOnly ? Font.Medium : Font.Normal
 
         Behavior on color { ColorAnimation { duration: 160 } }
@@ -480,8 +480,7 @@ Item {
                             ? Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.95)
                             : Qt.rgba(1, 1, 1, 0.62)
 
-            font.pixelSize: 18
-
+            // font.pixelSize: 18
             font.weight: Font.Medium
 
             Behavior on color { ColorAnimation { duration: 180 } }
@@ -854,7 +853,7 @@ Item {
                                     ? Qt.rgba(1, 1, 1, 0.88)
                                     : Qt.rgba(1, 1, 1, 0.68)
 
-                    font.pixelSize: 15
+                    // font.pixelSize: 15
                     font.weight: delegateRoot.itemSelected
                                     ? Font.DemiBold
                                     : Font.Medium
@@ -882,8 +881,7 @@ Item {
 
                     color: Qt.rgba(liquidGlassComboBox.accentColor.r, liquidGlassComboBox.accentColor.g, liquidGlassComboBox.accentColor.b, 0.95)
 
-                    font.pixelSize: 15
-
+                    // font.pixelSize: 15
                     font.weight: Font.Bold
 
                     opacity: delegateRoot.itemSelected ? 1 : 0

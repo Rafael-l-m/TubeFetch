@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import "qml/components" as Comp
 import "qml/pages/mainpage" as Mp
@@ -8,16 +9,20 @@ ApplicationWindow {
     id: window
     visible: true
 
-    width: 900
-    height: 700
+    width: 1000
+    height: 1000
 
-    minimumWidth: 700
-    minimumHeight: 400
+    minimumWidth: 900
+    minimumHeight: 960
 
     maximumWidth: Screen.width
     maximumHeight: Screen.height
 
     title: qsTr("TubeFetch (v3.0.0)")
+
+    onClosing: (event) => { backend.requestQuitApp(); event.accepted = true }
+
+    Component.onCompleted: { windowManager.setMainWindow(window) }
 
     Comp.Background { }
 
@@ -76,8 +81,8 @@ ApplicationWindow {
 
         anchors.fill: parent
 
-        initialItem: Mp.MainPage {
-            id: mainPage
-        }
+         initialItem: Mp.MainPage { id: mainPage }
+
+        //initialItem: Testt.ToolsInitConfigPage { id: mainPage }
     }
 }

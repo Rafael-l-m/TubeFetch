@@ -22,6 +22,7 @@ Item {
     property alias font: input.font
     property alias cursorPosition: input.cursorPosition
     property alias inputMethodHints: input.inputMethodHints
+    property alias extraTimer: extraTimer
 
     property bool hovered: mouseDetector.containsMouse
     property bool focused: input.activeFocus
@@ -296,7 +297,11 @@ Item {
 
         onAccepted: liquidGlassTextField.accepted()
 
-        onTextEdited: function() { liquidGlassTextField.textEdited(input.text); unfocusedTimer.restart() }
+        onTextEdited: function() {
+            liquidGlassTextField.textEdited(input.text)
+            unfocusedTimer.restart()
+            extraTimer.restart()
+        }
 
         onActiveFocusChanged: { if (input.activeFocus) { unfocusedTimer.restart() } }
 
@@ -394,5 +399,11 @@ Item {
         visible: liquidGlassTextField.focused && !liquidGlassTextField.readOnly
 
         z: -1
+    }
+
+    Timer {
+        id: extraTimer
+        interval: 1500
+        repeat: false
     }
 }
