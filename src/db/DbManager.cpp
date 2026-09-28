@@ -113,6 +113,19 @@ QJsonObject DbManager::removeUselessDownloadUrlInfo(const QJsonObject& obj) cons
     return res;
 }
 
+QJsonObject DbManager::removeAllDownloadUrlInfo() const {
+    QJsonObject res;
+
+    if (DataBase::removeAllDownloadUrlInfo()) { res[JSON_FORMAT::STATUS] = JSON_FORMAT::STATUS_ACCEPTED; }
+
+    else {
+        res[JSON_FORMAT::STATUS] = JSON_FORMAT::STATUS_REFUSED;
+        res[JSON_FORMAT::MESSAGE] = tr("Database is empty");
+    }
+
+    return res;
+}
+
 QJsonObject DbManager::updateUrl(const QJsonObject& obj) const {
     QJsonObject res;
 

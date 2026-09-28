@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Rectangle {
+    property alias downloadListView: downloadListView
+
     signal editDownloadRequest(var idd)
     signal removeDownloadRequest(var idd)
     signal startDownloadRequest(var idd)

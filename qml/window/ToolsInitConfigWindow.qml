@@ -215,7 +215,7 @@ ApplicationWindow {
 
     Comp.MessageDialog { id: showInfo; b_askType: false }
 
-    Comp.LoadingOverlay { id: loading; r_overlayWidth: toolsInitConfigWindow.width; r_overlayHeight: toolsInitConfigWindow.height }
+    Comp.LoadingOverlay { id: loading; overlayWidth: toolsInitConfigWindow.width; overlayHeight: toolsInitConfigWindow.height }
 
     Connections {
         target: backend

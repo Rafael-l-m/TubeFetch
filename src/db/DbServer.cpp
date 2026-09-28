@@ -43,6 +43,12 @@ DbServer::DbServer(QObject* parent) : QObject(parent), port(0) {
         this->sendResponse(req, response);
     };
 
+    this->handlers[Operation::DeleteAllDownloadUrlInformation] = [this](const DbRequest& req) {
+        auto response = this->manager->removeAllDownloadUrlInfo();
+        response[JSON_FORMAT::ID] = req.id;
+        this->sendResponse(req, response);
+    };
+
     this->handlers[Operation::UpdateInformation] = [this](const DbRequest& req) {
         QJsonObject response;
 

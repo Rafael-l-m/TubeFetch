@@ -144,8 +144,6 @@ namespace MediaCodecFilters {
 
 namespace SYS_CONFIG {
     inline const QString PATH_YT_DLP {"tools/yt_dlp_path"};
-    inline const QString PATH_TOKEN_PROVIDER_YT_DLP {"tools/bgutil_yt_dlp_pot_provider"};
-    inline const QString PATH_TOKEN_PROVIDER_YT_DLP_RS {"tools/bgutil_yt_dlp_pot_provider"};
     inline const QString PATH_FFMPEG {"tools/ffmpeg_path"};
     inline const QString PATH_NODE {"tools/node_js_path"};
 

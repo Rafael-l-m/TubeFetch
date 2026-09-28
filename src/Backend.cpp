@@ -572,6 +572,8 @@ void Backend::removeAllDownloads() {
     });
 }
 
+void Backend::removeAllDownloadUrlInfo() { this->m_client->removeAllDownloadUrlInfo([](const QJsonObject& obj){}); }
+
 
 // Edit Download
 
@@ -947,8 +949,6 @@ void Backend::getUrlInfo(const QString& url) {
         const auto _info = info[JSON_FORMAT::INFO].toString();
         const auto _obj = QJsonDocument::fromJson(_info.toUtf8()).object();
 
-        qDebug() << _obj;
-
         if (_info.isEmpty()) { this->m_urlInfoManager->getInfo(urlTrimmed); }
 
         else { this->m_urlInfoManager->analyzeUrlInfo(_obj); }
@@ -960,9 +960,7 @@ Q_INVOKABLE void Backend::cleanDownloadUrlInfo() {
 
     const qint64 threshold = QDateTime::currentSecsSinceEpoch() - retentionTime;
 
-    this->m_client->removeUselessDownloadUrlInfo(threshold, [this](const QJsonObject& obj){
-        qDebug() << obj;
-    });
+    this->m_client->removeUselessDownloadUrlInfo(threshold, [](const QJsonObject& obj){});
 }
 
 

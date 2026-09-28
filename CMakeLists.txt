@@ -95,7 +95,6 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/components/HighlightText.qml
         QML_FILES qml/components/MessageDialog.qml
         QML_FILES qml/components/Toast.qml
-        QML_FILES
         QML_FILES qml/window/ToolsInitConfigWindow.qml
         QML_FILES qml/window/ShowCodecsWindow.qml
 )
@@ -117,9 +116,9 @@ if (APPLE)
         "${CMAKE_SOURCE_DIR}/resources/AppIcon.icns"
         "$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/AppIcon.icns"
 
-        #COMMAND ${CMAKE_COMMAND} -E copy
-        #"${CMAKE_SOURCE_DIR}/resources/HelpDoc_v2_1_0.pdf"
-        #"$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/HelpDoc_v2_1_0.pdf"
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/HelpDoc.pdf"
+        "$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/HelpDoc.pdf"
 
         #COMMAND ${CMAKE_COMMAND} -E copy_directory
         #${CMAKE_SOURCE_DIR}/resources/translations/ForMachine

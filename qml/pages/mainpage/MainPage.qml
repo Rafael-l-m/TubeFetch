@@ -1,14 +1,33 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import "../../components" as Comp
 import "../../download" as Do
 
 Rectangle {
+    readonly property bool showMenuBar: true
+
+    property bool selfCheckWhenStart: false
+    property bool onlyDownloading: false
+    property bool allDownloading: false
+
+    property alias downloadList: downloadList
+    property alias terminalView: terminalView
+
     id: background
 
     color: "transparent"
 
-    Component.onCompleted: { }//backend.loadSettings(); }
+    Component.onCompleted: {
+        if (background.selfCheckWhenStart) {
+            loading.running = true
+            loading.visible = true
+
+            backend.checkTools()
+        }
+
+        else { backend.loadTools() }
+    }
 
     ColumnLayout {
         id: columnLayout
@@ -51,13 +70,33 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onEditDownloadRequest:   function(idd) { console.log("Edit item: ", idd)   }
-                onRemoveDownloadRequest: function(idd) { console.log("Remove item: ", idd) }
+                onEditDownloadRequest: function(idd) {
+                    mainStackView.push(
+                        Qt.resolvedUrl("../addnewdownloadpage/AddNewDownloadPage.qml"),
+                        {
+                            "editMode": true,
+                            "internalIdd": idd
+                        }
+                    )
+                }
+
+                onRemoveDownloadRequest: function(idd) { backend.removeDownload(idd) }
+
                 onStartDownloadRequest:  function(idd) { console.log("Start item: ", idd)  }
                 onStopDownloadRequest:   function(idd) { console.log("Stop item: ", idd)   }
             }
 
-            Comp.LiquidGlassTerminalView { id: terminalView; Layout.fillWidth: true; Layout.fillHeight: true }
+            Comp.LiquidGlassTerminalView {
+                id: terminalView
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                // model: terminalModelList
+                onCommandEntered: function(command) {
+                    console.log("New Command: ", command)
+                }
+            }
         }
 
         RowLayout {
@@ -81,7 +120,15 @@ Rectangle {
 
             Item { Layout.fillWidth: true }
 
-            Comp.LiquidGlassButton { id: removeAllDownloads; text: qsTr("Remove All Downloads"); implicitWidth: 300 }
+            Comp.LiquidGlassButton {
+                id: removeAllDownloads
+
+                text: qsTr("Remove All Downloads")
+
+                implicitWidth: 300
+
+                onClicked: { askIfRemoveAllDownloads.open() }
+            }
 
             Item { Layout.fillWidth: true }
         }
@@ -131,11 +178,22 @@ Rectangle {
         onTriggered: { downloadYtDlp.progressValue = 1; backend.saveYtDlpPath() }
     }
 
+    Comp.MessageDialog {
+        id: askIfRemoveAllDownloads;
+
+        width: 350
+        height: 110
+
+        messageText: qsTr("Are you sure you want to remove all downloads?")
+
+        onAccepted: { backend.removeAllDownloads() }
+    }
+
     Comp.MessageDialog { id: showInfo; b_askType: false }
 
     Comp.Toast { id: toast }
 
-    Comp.LoadingOverlay { id: loading; r_overlayWidth: background.width; r_overlayHeight: background.height; }
+    Comp.LoadingOverlay { id: loading; overlayWidth: background.width; overlayHeight: background.height; }
 
     Connections {
         target: messageCenter
@@ -171,8 +229,6 @@ Rectangle {
 
         function onSettingsLoaded(obj) {
             const _selfCheck = obj.selfCheck
-
-            console.log("Check: ", _selfCheck)
 
             if (_selfCheck) {
                 loading.running = true

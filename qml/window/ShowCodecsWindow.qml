@@ -16,7 +16,7 @@ ApplicationWindow {
     title: qsTr("Show Codecs")
     flags: Qt.Dialog
 
-    Comp.Background {}
+    Comp.Background { }
 
     Rectangle {
         id: rectangle

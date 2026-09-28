@@ -14,7 +14,7 @@ Rectangle {
     property bool autoScroll: true
     property int maxLines: 10000
 
-    property alias p_ListModel: terminalModel
+    property alias terminalModelList: terminalModel
 
     signal commandEntered(string command)
 

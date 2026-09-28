@@ -29,7 +29,11 @@ Rectangle {
         onReleased: (points) => { if (points[0].x - points[0].startX > 120) { mainStackView.pop() } }
     }
 
-    Component.onCompleted: { backend.cleanDownloadUrlInfo(); }
+    Component.onCompleted: {
+        backend.cleanDownloadUrlInfo()
+
+        if (background.editMode && background.internalIdd !== 0) { backend.requestEditInformation(background.internalIdd) }
+    }
 
     ColumnLayout {
         id: columnLayout
@@ -77,9 +81,7 @@ Rectangle {
                     onTextChanged: {
                         if (background.editMode) { return }
 
-                        const newContent = textFieldURL.text.trim()
-
-                        if (newContent.length === 0) {
+                        if (textFieldURL.text.trim().length === 0) {
                             textFieldURL.text = ""
                             textFieldTitle.text = ""
 
@@ -223,8 +225,6 @@ Rectangle {
                     model: [qsTr("Best Video"), qsTr("Best Audio"), qsTr("Personalized")]
 
                     onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-
                         if (modeComboBox.currentIndex !== 2) {
                             audioCodecComboBox.visible = false
                             videoCodecComboBox.visible = false
@@ -245,6 +245,8 @@ Rectangle {
                         hideMode4.visible = false
                         hideMode5.visible = false
                         hideMode6.visible = false
+
+                        if (background.editMode) { textFieldSaveAs.text = "" }
                     }
 
                     onPopupOpened: {
@@ -310,10 +312,6 @@ Rectangle {
 
                     model: [qsTr("None")]
 
-                    onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-                    }
-
                     onPopupOpened: {
                         audioCodecComboBox.visible = false
                         nonDashCodecComboBox.visible = false
@@ -358,10 +356,6 @@ Rectangle {
                     enabled: nonDashCodecComboBox.currentIndex === 0
 
                     model: [qsTr("None")]
-
-                    onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-                    }
 
                     onPopupOpened: {
                         nonDashCodecComboBox.visible = false
@@ -408,10 +402,6 @@ Rectangle {
 
                     model: [qsTr("None")]
 
-                    onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-                    }
-
                     onPopupOpened: {
                         metadataCodecComboBox.visible = false
                         subtitlesCodecComboBox.visible = false
@@ -449,10 +439,6 @@ Rectangle {
 
                     model: [qsTr("Without Metadata"), qsTr("With Metadata")]
 
-                    onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-                    }
-
                     onPopupOpened: {
                         subtitlesCodecComboBox.visible = false
                         hideMode5.visible = true
@@ -485,10 +471,6 @@ Rectangle {
                     fontsize: 14
 
                     model: [qsTr("Without Subtitles"), qsTr("With Subtitles")]
-
-                    onActivated: {
-                        console.log("Model changed, index: ", currentIndex, currentText)
-                    }
 
                     onPopupOpened: {
                         if (modeComboBox.currentIndex === 2) {
@@ -558,15 +540,7 @@ Rectangle {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 }
 
-                Comp.LiquidGlassTextField {
-                    id: textFieldSaveAs
-
-                    implicitWidth: 500
-
-                    font.pixelSize: 12
-
-                    readOnly: true
-                }
+                Comp.LiquidGlassTextField { id: textFieldSaveAs; implicitWidth: 500; font.pixelSize: 12; readOnly: true }
 
                 Comp.LiquidGlassTextField { id: hideMode6; opacity: 0.1; implicitWidth: 500; font.pixelSize: 12; visible: false }
 
@@ -673,38 +647,9 @@ Rectangle {
                     loading.running = true
                     loading.visible = true
 
-                    if (background.editMode) {
-                        backend.editDownload(
-                            background.internalIdd,
-                            url,
-                            title,
-                            ac,
-                            vc,
-                            ndc,
-                            ba,
-                            bv,
-                            sp,
-                            sp,
-                            met,
-                            subt
-                        )
-                    }
+                    if (background.editMode) { backend.editDownload(background.internalIdd, url, title, ac, vc, ndc, ba, bv, sp, sp, met, subt) }
 
-                    else {
-                        backend.addNewDownload(
-                            url,
-                            title,
-                            ac,
-                            vc,
-                            ndc,
-                            ba,
-                            bv,
-                            sp,
-                            sp,
-                            met,
-                            subt
-                        )
-                    }
+                    else { backend.addNewDownload(url, title, ac, vc, ndc, ba, bv, sp, sp, met, subt) }
                 }
             }
 
@@ -752,21 +697,19 @@ Rectangle {
         }
     }
 
-    // ==
+
+    // ===========================================================
     // Delay Timer: search info after waiting 3 s in editMode
-    // NECCESAARRY
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
-     // ==========================================
+    // ===========================================================
+
+    Timer {
+        id: delayTimer
+
+        interval: 3000
+        repeat: false
+
+        onTriggered: { backend.getUrlInfo(textFieldURL.text.trim()) }
+    }
 
     FileDialog {
         id: saveAs
@@ -786,7 +729,7 @@ Rectangle {
 
     Comp.Toast { id: toast }
 
-    Comp.LoadingOverlay { id: loading; r_overlayWidth: background.width; r_overlayHeight: background.height }
+    Comp.LoadingOverlay { id: loading; overlayWidth: background.width; overlayHeight: background.height }
 
     function disableInnecessaryComponents() {
         textFieldURL.readOnly = true
@@ -931,7 +874,7 @@ Rectangle {
             loading.visible = false
             loading.running = false
 
-            if (accepted) { Qt.callLater(function() { windowManager.backToMainWindow() }) }
+            if (accepted) { Qt.callLater(function() { mainStackView.pop() }) }
 
             else { toast.show(message); backBtn.enabled = true }
         }
@@ -950,35 +893,16 @@ Rectangle {
 
                 else {
                     modeComboBox.currentIndex = 2
-
-                    /*r2.p_GridLayout_Row_PushButton.enabled = true
-                    r2.p_GridLayout_Row_PushButton.visible = true
-                    r2.p_GridLayout_LabelAudioCodec.visible = true
-                    r2.p_GridLayout_ChooseComboBoxAudioCodec.visible = true
-                    r2.p_GridLayout_LabelVideoCodec.visible = true
-                    r2.p_GridLayout_ChooseComboBoxVideoCodec.visible = true
-                    r2.p_GridLayout_LabelNonDashCodec.visible = true
-                    r2.p_GridLayout_ChooseComboBoxNonDash.visible = true*/
-
                     background.audioItag = obj.audioCode.trim()
                     background.videoItag = obj.videoCode.trim()
                     background.nonDashItag = obj.nonDashCode.trim()
                 }
 
-                backend.getUrlInfo(textFieldURL.text.trim())
-                // ==========================================
-                 // ========================================== // ==========================================
-                 // ==========================================
-                 // ==========================================
-                 // ==========================================
-                 // ==========================================
-                 // ==========================================
-                 // ==========================================
-
+                delayTimer.restart()
 
                 metadataCodecComboBox.currentIndex = (obj.metadata ? 1 : 0)
                 subtitlesCodecComboBox.currentIndex = (obj.subtitles ? 1 : 0)
-                textFieldSaveAs.text = obj.savePath.trim()
+                textFieldSaveAs.text = modeComboBox.currentIndex === 2 ? "" : obj.savePath.trim()
 
                 loading.running = true
                 loading.visible = true

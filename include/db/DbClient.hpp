@@ -20,6 +20,7 @@ public:
     void removeDownload(qint64 internalId, std::function<void(QJsonObject)> cb);
     void removeAllDownloads(std::function<void(QJsonObject)> cb);
     void removeUselessDownloadUrlInfo(qint64 timeLeft, std::function<void(QJsonObject)> cb);
+    void removeAllDownloadUrlInfo(std::function<void(QJsonObject)> cb);
 
     void updateUrl(qint64 internalId, const QString& url, std::function<void(QJsonObject)> cb);
     void updateTitle(qint64 internalId, const QString& title, std::function<void(QJsonObject)> cb);

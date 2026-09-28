@@ -23,6 +23,7 @@ protected:
     bool remove(qint64 id) const;
     bool removeAll() const;
     bool removeUselessDownloadUrlInfo(qint64 timeLeft) const;
+    bool removeAllDownloadUrlInfo() const;
 
     bool updateUrl(qint64 id, const QString& newUrl) const;
     bool updateTitle(qint64 id, const QString& newTitle) const;

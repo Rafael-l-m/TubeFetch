@@ -133,6 +133,19 @@ Item {
         return data
     }
 
+    function find(value) {
+        let count = modelCount()
+
+        for (let i = 0; i < count; ++i) {
+            const it = String(getValue(i))
+            const itt = String(value)
+
+            if (String(getValue(i)) === String(value)) { return i }
+        }
+
+        return -1
+    }
+
     function clampIndex(index) {
         var count = modelCount()
 

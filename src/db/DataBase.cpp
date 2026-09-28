@@ -193,6 +193,21 @@ bool DataBase::removeUselessDownloadUrlInfo(const qint64 timeLeft) const {
     return q.numRowsAffected() > 0;
 }
 
+bool DataBase::removeAllDownloadUrlInfo() const {
+    QSqlQuery q(this->db);
+
+    q.prepare("DELETE FROM urlInfo");
+
+    if (!q.exec()) {
+        APP::messageCenter()->sendError(QString("SQL: %1").arg(q.lastQuery()));
+        APP::messageCenter()->sendError(QString("SQL Error: %1").arg(q.lastError().text().trimmed()));
+
+        return false;
+    }
+
+    return q.numRowsAffected() > 0;
+}
+
 bool DataBase::updateUrl(const qint64 id, const QString& newUrl) const {
     QSqlQuery q(this->db);
 

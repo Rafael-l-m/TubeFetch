@@ -74,6 +74,7 @@ public:
     // Remove Download
     Q_INVOKABLE void removeDownload(qint64 internalId);
     Q_INVOKABLE void removeAllDownloads();
+    Q_INVOKABLE void removeAllDownloadUrlInfo();
 
     // Edit Download
     Q_INVOKABLE void requestEditInformation(const qint64 internalId);

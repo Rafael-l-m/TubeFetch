@@ -77,6 +77,16 @@ void DbClient::removeUselessDownloadUrlInfo(const qint64 timeLeft, std::function
     );
 }
 
+void DbClient::removeAllDownloadUrlInfo(std::function<void(QJsonObject)> cb) {
+    this->sendRequest(
+        Operation::DeleteAllDownloadUrlInformation,
+        Specification::Unknown,
+        {},
+        std::move(cb)
+    );
+}
+
+
 void DbClient::updateUrl(const qint64 internalId, const QString& url, std::function<void(QJsonObject)> cb) {
     QJsonObject params;
 

@@ -13,6 +13,7 @@ public:
     QJsonObject removeDownload(const QJsonObject& obj) const;
     QJsonObject removeAllDownloads() const;
     QJsonObject removeUselessDownloadUrlInfo(const QJsonObject& obj) const;
+    QJsonObject removeAllDownloadUrlInfo() const;
 
     QJsonObject updateUrl(const QJsonObject& obj) const;
     QJsonObject updateTitle(const QJsonObject& obj) const;
