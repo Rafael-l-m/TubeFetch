@@ -98,6 +98,8 @@ qt_add_qml_module(TubeFetch
         QML_FILES qml/window/ToolsInitConfigWindow.qml
         QML_FILES qml/window/ShowCodecsWindow.qml
         QML_FILES qml/pages/preferencespage/PreferencesPage.qml
+        SOURCES include/LanguageManager.hpp
+        SOURCES src/LanguageManager.cpp
 )
 
 if (APPLE)
