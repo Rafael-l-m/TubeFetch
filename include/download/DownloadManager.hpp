@@ -30,7 +30,6 @@ signals:
     void downloadFailedAtStart(qint64 internalId);
     void downloadSubprocessErrorOccurred(qint64 internalId, const QString& message);
     void downloadAllFinished();
-    void requestConsume(qint64 internalId, int type, int weight);
 
 private:
     void tryStartNextDownload();

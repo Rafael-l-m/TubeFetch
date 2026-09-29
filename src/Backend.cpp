@@ -35,25 +35,16 @@ Backend::Backend(QObject* parent) : QObject(parent) {
 
     for (const auto& item : *(SharedStorage::instance().getDownloads())) { this->m_downloadManager->addDownload(item); }
 
-    connect(this->m_downloadManager, &DownloadManager::requestConsume, this, [this](const qint64 internalId, const int type, const int weight){
-        this->consume(internalId, type, weight);
-    });
-
     connect(this->m_downloadManager, &DownloadManager::downloadModelChanged, this, [this](const QSharedPointer<Download>& dt){
         this->m_downloadModel->refresh(dt);
 
         const auto _internalId = dt->getInternalId();
 
         this->m_client->updateDownloadStatus(_internalId, dt->getDownloadStatus(), [](const QJsonObject&) {});
-
         this->m_client->updateProgress(_internalId, dt->getProgress(), [](const QJsonObject&) {});
-
         this->m_client->updateDownloadedBytes(_internalId, dt->getDownloadedBytes(), [](const QJsonObject&) {});
-
         this->m_client->updateTotalBytes(_internalId, dt->getTotalBytes(), [](const QJsonObject&j) {});
-
         this->m_client->updateDownloadSpeed(_internalId, dt->getDownloadSpeed(), [](const QJsonObject&) {});
-
         this->m_client->updateEta(_internalId, dt->getEta().trimmed(), [](const QJsonObject&) {});
     });
 
@@ -445,7 +436,6 @@ void Backend::checkAvailablePath(const QString& path) {
     emit availablePathChecked(ToolsManager::checkPathWritable(pathTrimmed), pathTrimmed);
 }
 
-
 void Backend::addNewDownload(
     const QString& url,
     const QString& title,
@@ -570,7 +560,7 @@ void Backend::removeAllDownloads() {
     });
 }
 
-void Backend::removeAllDownloadUrlInfo() { this->m_client->removeAllDownloadUrlInfo([](const QJsonObject& obj){}); }
+void Backend::removeAllDownloadUrlInfo() { this->m_client->removeAllDownloadUrlInfo([](const QJsonObject&){}); }
 
 
 // Edit Download
@@ -676,8 +666,6 @@ void Backend::editDownload(
 void Backend::startDownload(const qint64 internalId) {
     if (internalId <= 0) { return; }
 
-    this->consume(internalId, 2, 6);
-
     QMutexLocker locker(&this->m_mutex);
 
     const auto size = this->downloadingIds.size();
@@ -734,15 +722,10 @@ void Backend::startDownload(const qint64 internalId) {
         const auto _internalId = dt->getInternalId();
 
         this->m_client->updateDownloadStatus(_internalId, dt->getDownloadStatus(), [](const QJsonObject&) {});
-
         this->m_client->updateProgress(_internalId, dt->getProgress(), [](const QJsonObject&) {});
-
         this->m_client->updateDownloadedBytes(_internalId, dt->getDownloadedBytes(), [](const QJsonObject&) {});
-
         this->m_client->updateTotalBytes(_internalId, dt->getTotalBytes(), [](const QJsonObject&j) {});
-
         this->m_client->updateDownloadSpeed(_internalId, dt->getDownloadSpeed(), [](const QJsonObject&) {});
-
         this->m_client->updateEta(_internalId, dt->getEta().trimmed(), [](const QJsonObject&) {});
     });
 
@@ -958,9 +941,8 @@ Q_INVOKABLE void Backend::cleanDownloadUrlInfo() {
 
     const qint64 threshold = QDateTime::currentSecsSinceEpoch() - retentionTime;
 
-    this->m_client->removeUselessDownloadUrlInfo(threshold, [](const QJsonObject& obj){});
+    this->m_client->removeUselessDownloadUrlInfo(threshold, [](const QJsonObject&){});
 }
-
 
 
 // Update Checker
@@ -978,25 +960,6 @@ void Backend::checkUpdate() const {
     }
 
     this->m_updateChecker->checkUpdate();
-}
-
-
-// Youtube Rate Limiter
-
-void Backend::consume(const qint64 internalId, const int type, const int weight, const qint64 createdAt) {
-    this->canPerform(weight, [internalId, createdAt, type, weight, this](const bool ok){
-        if (!ok) { return; }
-
-        //this->m_client->addYoutubeAction({internalId, parseYoutubeActionsType(type), weight, createdAt}, [](const QJsonObject&){});
-    });
-}
-
-void Backend::cleanUp() {
-    constexpr qint64 retentionTime = 48 * 60 * 60;
-
-    const qint64 threshold = QDateTime::currentSecsSinceEpoch() - retentionTime;
-
-    //this->m_client->removeUselessActions(threshold, [](const QJsonObject&){});
 }
 
 
@@ -1020,15 +983,10 @@ void Backend::clearAllDownloadStatus() {
         const auto _internalId = it->getInternalId();
 
         this->m_client->updateProgress(_internalId, 0.0, [](const QJsonObject&){});
-
         this->m_client->updateDownloadStatus(_internalId, DownloadStatus::WAITING, [](const QJsonObject&){});
-
         this->m_client->updateDownloadedBytes(_internalId, 0.0, [](const QJsonObject&){});
-
         this->m_client->updateTotalBytes(_internalId, 0.0, [](const QJsonObject&){});
-
         this->m_client->updateDownloadSpeed(_internalId, 0.0, [](const QJsonObject&){});
-
         this->m_client->updateEta(_internalId, "00:00", [](const QJsonObject&){});
     }
 }
@@ -1110,59 +1068,3 @@ void Backend::updateNodePath(const QString& filePath) {
 // Quit App
 
 void Backend::requestQuitApp() { this->m_downloadManager->stopDownloads(); }
-
-
-// Private
-
-void Backend::usageSince(const qint64 timestamp, std::function<void(int)> cb) {
-    if (timestamp <= 0) { return; }
-
-    /*this->m_client->getWeights(timestamp, [timestamp, cb](const QJsonObject& obj){
-        const auto weights = obj[JSON_FORMAT::WEIGHTS].toInt();
-        cb(weights);
-    });*/
-}
-
-void Backend::usageLastHour(std::function<void(int)> cb) {
-    const auto now = QDateTime::currentSecsSinceEpoch();
-    constexpr qint64 oneHour = 60 * 60;
-    this->usageSince(now - oneHour, cb);
-}
-
-void Backend::usageLastDay(std::function<void(int)> cb) {
-    const auto now = QDateTime::currentSecsSinceEpoch();
-    constexpr qint64 oneDay = 24 * 60 * 60;
-    this->usageSince(now - oneDay, cb);
-}
-
-void Backend::canPerform(const int weight, std::function<void(bool)> cb) {
-    if (weight != 1 && weight != 6 && weight != 0) {
-        APP::messageCenter()->sendWarning("Error weight: must be 1 or 6");
-        return ;
-    }
-
-    this->cleanUp();
-
-    this->usageLastHour([weight, cb, this](const int weightsHour){
-        APP::messageCenter()->sendDebug(QString("WeightHour: %1; maxPerHour: %2").arg(weightsHour).arg(Backend::maxPerHour));
-
-        if (weightsHour + weight > Backend::maxPerHour) {
-            emit possiblePerform(false);
-            cb(false);
-            return;
-        }
-
-        this->usageLastDay([weight, cb, this](const int weightsDay){
-            APP::messageCenter()->sendDebug(QString("WeightDay: %1; maxPerDay: %2").arg(weightsDay).arg(Backend::maxPerDay));
-
-            if (weightsDay + weight > Backend::maxPerDay) {
-                emit possiblePerform(false);
-                cb(false);
-                return;
-            }
-
-            emit possiblePerform(true);
-            cb(true);
-        });
-    });
-}

@@ -69,7 +69,7 @@ public:
         double totalBytes = 0.0,
         double downloadSpeed = 0.0,
         const QString& eta = "00:00"
-        );
+    );
 
     // Remove Download
     Q_INVOKABLE void removeDownload(qint64 internalId);
@@ -97,7 +97,7 @@ public:
         double totalBytes = 0.0,
         double downloadSpeed = 0.0,
         const QString& eta = "00:00"
-        );
+    );
 
     // Start / Stop Download
     Q_INVOKABLE void startDownload(qint64 internalId);
@@ -111,19 +111,11 @@ public:
     Q_INVOKABLE void getUrlInfo(const QString& url);
     Q_INVOKABLE void cleanDownloadUrlInfo();
 
-
     // Update Checker
     Q_INVOKABLE static void visitRepo();
     Q_INVOKABLE static void helpDoc();
     Q_INVOKABLE static void reportIssues();
     Q_INVOKABLE void checkUpdate() const;
-
-    // Youtube Rate Limiter
-    static const int maxPerHour {55};
-    static const int maxPerDay {180};
-
-    Q_INVOKABLE void consume(qint64 internalId, int type, int weight, qint64 createdAt = QDateTime::currentSecsSinceEpoch());
-    Q_INVOKABLE void cleanUp();
 
     // Clear Status
     Q_INVOKABLE void clearAllDownloadStatus();
@@ -190,9 +182,6 @@ signals:
     // Update Checker
     void updateChecked(int updateStatus, const QString& latestVersion, const QString& notes, const QString& downloadUrl, const QString& message);
 
-    // Youtube Rate Limiter
-    void possiblePerform(bool ok);
-
     // Settings
     void settingsLoaded(const QJsonObject& obj);
     void settingsLoadedPreferencesPage(const QJsonObject& obj);
@@ -201,15 +190,7 @@ signals:
     void nodePathUpdated(bool ok);
 
 private:
-    void usageSince(qint64 timestamp, std::function<void(int)> cb);
-    void usageLastHour(std::function<void(int)> cb);
-    void usageLastDay(std::function<void(int)> cb);
-    void canPerform(int weight, std::function<void(bool)> cb);
-
-private:
     mutable QMutex m_mutex;
-
-    bool enableRateLimit = true;
 
     quint16 serverPort;
     DbServer* m_server = nullptr;

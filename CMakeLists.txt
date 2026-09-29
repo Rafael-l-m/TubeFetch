@@ -19,10 +19,10 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/importedcontent/CMakeLists.txt")
 endif()
 
 # Sanitizer -> stderr
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
-    add_link_options(-fsanitize=address)
-endif()
+#if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+#    add_link_options(-fsanitize=address)
+#endif()
 
 # include all .h files
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -35,71 +35,72 @@ qt_add_qml_module(TubeFetch
     URI TubeFetch
     QML_FILES
         Main.qml
-        QML_FILES qml/components/LiquidGlassButton.qml
-        QML_FILES qml/components/Background.qml
-        QML_FILES qml/components/LiquidGlassSegmentedSelection.qml
-        QML_FILES qml/components/LiquidGlassSwitch.qml
-        QML_FILES qml/components/LiquidGlassTextField.qml
-        QML_FILES qml/components/LiquidGlassComboBox.qml
-        QML_FILES qml/components/LiquidGlassTerminalView.qml
-        QML_FILES qml/pages/mainpage/MainPage.qml
-        QML_FILES qml/download/DownloadList.qml
-        QML_FILES qml/download/DownloadDelegate.qml
-        QML_FILES qml/components/MarqueeText.qml
-        QML_FILES qml/components/LiquidGlassActionButton.qml
-        SOURCES include/core/Constants.hpp
-        SOURCES include/core/BasicTools.hpp
-        SOURCES include/update/UpdateChecker.hpp
-        SOURCES src/update/UpdateChecker.cpp
-        SOURCES include/core/APP.hpp
-        SOURCES include/core/MessageCenter.hpp
-        SOURCES include/core/SingleAppProtection.hpp
-        SOURCES src/core/SingleAppProtection.cpp
-        SOURCES include/WindowManager.hpp
-        SOURCES src/WindowManager.cpp
-        SOURCES include/db/Operation.hpp
-        SOURCES include/db/Specification.hpp
-        SOURCES include/db/DataBase.hpp
-        SOURCES src/db/DataBase.cpp
-        SOURCES include/db/DbRequest.hpp
-        SOURCES include/download/Download.hpp
-        SOURCES include/download/DownloadStatus.hpp
-        SOURCES include/download/DownloadUrlInfo.hpp
-        SOURCES include/db/DbManager.hpp
-        SOURCES src/db/DbManager.cpp
-        SOURCES include/db/DbServer.hpp
-        SOURCES src/db/DbServer.cpp
-        SOURCES include/Backend.hpp
-        SOURCES src/Backend.cpp
-        SOURCES include/db/DbClient.hpp
-        SOURCES src/db/DbClient.cpp
-        SOURCES include/tools/Tools.hpp
-        SOURCES include/tools/ToolsManager.hpp
-        SOURCES src/tools/ToolsManager.cpp
-        SOURCES include/provider/ProviderManager.hpp
-        SOURCES src/provider/ProviderManager.cpp
-        SOURCES include/SharedStorage.hpp
-        SOURCES include/download/DownloadModel.hpp
-        SOURCES src/download/DownloadModel.cpp
-        SOURCES include/url/URLInfoManager.hpp
-        SOURCES src/url/URLInfoManager.cpp
-        QML_FILES qml/pages/addnewdownloadpage/AddNewDownloadPage.qml
-        SOURCES include/download/ProcessPool.hpp
-        SOURCES src/download/ProcessPool.cpp
-        SOURCES include/download/DownloadWorker.hpp
-        SOURCES src/download/DownloadWorker.cpp
-        SOURCES include/download/DownloadManager.hpp
-        SOURCES src/download/DownloadManager.cpp
-        QML_FILES qml/components/LoadingOverlay.qml
-        QML_FILES qml/components/DownloadFileDialog.qml
-        QML_FILES qml/components/HighlightText.qml
-        QML_FILES qml/components/MessageDialog.qml
-        QML_FILES qml/components/Toast.qml
-        QML_FILES qml/window/ToolsInitConfigWindow.qml
-        QML_FILES qml/window/ShowCodecsWindow.qml
-        QML_FILES qml/pages/preferencespage/PreferencesPage.qml
-        SOURCES include/LanguageManager.hpp
-        SOURCES src/LanguageManager.cpp
+        qml/components/Background.qml
+        qml/components/DownloadFileDialog.qml
+        qml/components/HighlightText.qml
+        qml/components/LiquidGlassActionButton.qml
+        qml/components/LiquidGlassButton.qml
+        qml/components/LiquidGlassComboBox.qml
+        qml/components/LiquidGlassSegmentedSelection.qml
+        qml/components/LiquidGlassSwitch.qml
+        qml/components/LiquidGlassTerminalView.qml
+        qml/components/LiquidGlassTextField.qml
+        qml/components/LoadingOverlay.qml
+        qml/components/MarqueeText.qml
+        qml/components/MessageDialog.qml
+        qml/components/Toast.qml
+        qml/download/DownloadDelegate.qml
+        qml/download/DownloadList.qml
+        qml/pages/addnewdownloadpage/AddNewDownloadPage.qml
+        qml/pages/mainpage/MainPage.qml
+        qml/pages/preferencespage/PreferencesPage.qml
+        qml/window/ShowCodecsWindow.qml
+        qml/window/ToolsInitConfigWindow.qml
+    SOURCES
+        include/core/APP.hpp
+        include/core/BasicTools.hpp
+        include/core/Constants.hpp
+        include/core/MessageCenter.hpp
+        include/core/SingleAppProtection.hpp
+        src/core/SingleAppProtection.cpp
+        include/db/DataBase.hpp
+        src/db/DataBase.cpp
+        include/db/DbClient.hpp
+        src/db/DbClient.cpp
+        include/db/DbManager.hpp
+        src/db/DbManager.cpp
+        include/db/DbRequest.hpp
+        include/db/DbServer.hpp
+        src/db/DbServer.cpp
+        include/db/Operation.hpp
+        include/db/Specification.hpp
+        include/download/Download.hpp
+        include/download/DownloadManager.hpp
+        src/download/DownloadManager.cpp
+        include/download/DownloadModel.hpp
+        src/download/DownloadModel.cpp
+        include/download/DownloadStatus.hpp
+        include/download/DownloadUrlInfo.hpp
+        include/download/DownloadWorker.hpp
+        src/download/DownloadWorker.cpp
+        include/download/ProcessPool.hpp
+        src/download/ProcessPool.cpp
+        include/provider/ProviderManager.hpp
+        src/provider/ProviderManager.cpp
+        include/tools/Tools.hpp
+        include/tools/ToolsManager.hpp
+        src/tools/ToolsManager.cpp
+        include/update/UpdateChecker.hpp
+        src/update/UpdateChecker.cpp
+        include/url/URLInfoManager.hpp
+        src/url/URLInfoManager.cpp
+        include/Backend.hpp
+        src/Backend.cpp
+        include/LanguageManager.hpp
+        src/LanguageManager.cpp
+        include/SharedStorage.hpp
+        include/WindowManager.hpp
+        src/WindowManager.cpp
 )
 
 if (APPLE)
@@ -120,7 +121,7 @@ if (APPLE)
         "$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/AppIcon.icns"
 
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_SOURCE_DIR}/resources/HelpDoc.pdf"
+        "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v3_0_0.pdf"
         "$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/HelpDoc.pdf"
 
         #COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -131,41 +132,41 @@ if (APPLE)
 elseif (WIN32)
     set_target_properties(TubeFetch PROPERTIES WIN32_EXECUTABLE TRUE)
 
-    #set_source_files_properties(resources/app.rc PROPERTIES LANGUAGE RC)
-    #target_sources(TubeFetch PRIVATE resources/app.rc)
+    set_source_files_properties(resources/app.rc PROPERTIES LANGUAGE RC)
+    target_sources(TubeFetch PRIVATE resources/app.rc)
 
-    #add_custom_command(TARGET TubeFetch POST_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy
-    #    "${CMAKE_SOURCE_DIR}/resources/AppIcon.ico"
-    #    "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.ico"
+    add_custom_command(TARGET TubeFetch POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/AppIcon.ico"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.ico"
 
-    #    COMMAND ${CMAKE_COMMAND} -E copy
-    #    "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v2_1_0.pdf"
-    #    "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc_v2_1_0.pdf"
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v3_0_0.pdf"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc.pdf"
 
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #    ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
-    #    $<TARGET_FILE_DIR:TubeFetch>/resources/translations
-    #)
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
+        $<TARGET_FILE_DIR:TubeFetch>/resources/translations
+    )
 
 elseif (UNIX)
     set_target_properties(TubeFetch PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     )
 
-    #add_custom_command(TARGET TubeFetch POST_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy
-    #    "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"
-    #    "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.png"
+    add_custom_command(TARGET TubeFetch POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/AppIcon.png"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/AppIcon.png"
 
-    #    COMMAND ${CMAKE_COMMAND} -E copy
-    #    "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v2_1_0.pdf"
-    #    "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc_v2_1_0.pdf"
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v3_0_0.pdf"
+        "$<TARGET_FILE_DIR:TubeFetch>/resources/HelpDoc.pdf"
 
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #    ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
-    #    $<TARGET_FILE_DIR:TubeFetch>/resources/translations
-    #)
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
+        $<TARGET_FILE_DIR:TubeFetch>/resources/translations
+    )
 
 endif()
 

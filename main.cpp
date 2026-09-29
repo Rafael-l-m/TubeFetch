@@ -1,12 +1,8 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <Backend.hpp>
 #include <core/BasicTools.hpp>
-#include <core/Constants.hpp>
 #include <core/MessageCenter.hpp>
 #include <core/SingleAppProtection.hpp>
-#include <download/DownloadModel.hpp>
-#include <Backend.hpp>
-#include <update/UpdateChecker.hpp>
+#include <LanguageManager.hpp>
 #include <WindowManager.hpp>
 #include <QQmlContext>
 
@@ -23,7 +19,7 @@ int main(int argc, char *argv[])
     if (singleApp.isRunning()) { return -1; }
 
     // Do not use native menubar
-    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+    // QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
 
     // Load Engine
     QQmlApplicationEngine engine;
@@ -41,7 +37,8 @@ int main(int argc, char *argv[])
     DownloadModel dm(&engine);
     engine.rootContext()->setContextProperty("downloadModel", &dm);
 
-
+    LanguageManager lm(&engine);
+    engine.rootContext()->setContextProperty("languageManager", &lm);
 
     WindowManager wm(&engine);
     engine.rootContext()->setContextProperty("windowManager", &wm);
@@ -69,8 +66,17 @@ int main(int argc, char *argv[])
     }
 
     // Load Language
+    const auto lang = CONFIG::readConfig<QString>(SYS_CONFIG::LANGUAGE).trimmed();
 
+    if (lang.isEmpty()) {
+        CONFIG::writeConfig({
+            { SYS_CONFIG::LANGUAGE, "en_US" }
+        });
 
+        lm.setLanguage("en_US");
+    }
+
+    else { lm.setLanguage(lang); }
 
     // Load Main Module
     engine.loadFromModule("TubeFetch", "Main");

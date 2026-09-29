@@ -120,8 +120,6 @@ void DownloadManager::tryStartNextDownload() {
 
     this->startDownload(ds);
 
-    emit requestConsume(ds->getInternalId(), 2, 6);
-
     QTimer::singleShot(0, this, &DownloadManager::tryStartNextDownload);
 }
 

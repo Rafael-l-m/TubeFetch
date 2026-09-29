@@ -144,6 +144,7 @@ namespace MediaCodecFilters {
 
 namespace SYS_CONFIG {
     inline const QString APP_VERSIONS {"versions"};
+    inline const QString LANGUAGE {"language"};
     inline const QString PATH_YT_DLP {"tools/yt_dlp_path"};
     inline const QString PATH_FFMPEG {"tools/ffmpeg_path"};
     inline const QString PATH_NODE {"tools/node_js_path"};
