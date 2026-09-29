@@ -184,9 +184,7 @@ Backend::Backend(QObject* parent) : QObject(parent) {
     connect(this->m_urlInfoManager, &URLInfoManager::jsonError, this, &Backend::jsonError);
     connect(this->m_urlInfoManager, &URLInfoManager::jsonReady, this, &Backend::jsonReady);
     connect(this->m_urlInfoManager, &URLInfoManager::newInfo, this, [this](const QString& url, const QString& info){
-        this->m_client->addDownloadUrlInfo({QDateTime::currentSecsSinceEpoch(), url, info}, [this](const QJsonObject& obj){
-            qDebug() << obj;
-        });
+        this->m_client->addDownloadUrlInfo({QDateTime::currentSecsSinceEpoch(), url, info}, [](const QJsonObject&){});
     });
 }
 
@@ -956,7 +954,7 @@ void Backend::getUrlInfo(const QString& url) {
 }
 
 Q_INVOKABLE void Backend::cleanDownloadUrlInfo() {
-    constexpr qint64 retentionTime = 24 * 60 * 60;
+    constexpr qint64 retentionTime = 31 * 24 * 60 * 60;
 
     const qint64 threshold = QDateTime::currentSecsSinceEpoch() - retentionTime;
 
@@ -1041,13 +1039,29 @@ void Backend::clearAllDownloadStatus() {
 void Backend::loadSettings() {
     QJsonObject obj;
 
-    const auto messageBeforeSaving = CONFIG::readConfig<bool>(SYS_CONFIG::DOWNLOAD_SETTINGS::SHOW_MESSAGE_BEFORE_SAVING);
     const auto selfCheck = CONFIG::readConfig<bool>(SYS_CONFIG::GENERAL_SETTINGS::SELF_CHECK_WHEN_EXECUTE);
 
-    obj.insert("messageBeforeSaving", messageBeforeSaving);
     obj.insert("selfCheck", selfCheck);
-    qDebug() << obj;
+
     emit settingsLoaded(obj);
+}
+
+void Backend::loadSettingsPreferencesPage() {
+    QJsonObject obj;
+
+    const auto appVersion = CONFIG::readConfig<QString>(SYS_CONFIG::APP_VERSIONS);
+    const auto selfCheck = CONFIG::readConfig<bool>(SYS_CONFIG::GENERAL_SETTINGS::SELF_CHECK_WHEN_EXECUTE);
+    const auto ytDlpPath = CONFIG::readConfig<QString>(SYS_CONFIG::PATH_YT_DLP);
+    const auto ffmpegPath = CONFIG::readConfig<QString>(SYS_CONFIG::PATH_FFMPEG);
+    const auto nodePath = CONFIG::readConfig<QString>(SYS_CONFIG::PATH_NODE);
+
+    obj.insert("versions", appVersion.trimmed());
+    obj.insert("selfCheck", selfCheck);
+    obj.insert("ytDlpPath", ytDlpPath.trimmed());
+    obj.insert("ffmpegPath", ffmpegPath.trimmed());
+    obj.insert("nodePath", nodePath.trimmed());
+
+    emit settingsLoadedPreferencesPage(obj);
 }
 
 void Backend::updateSelfCheck(const bool ok) {
@@ -1058,16 +1072,6 @@ void Backend::updateSelfCheck(const bool ok) {
     );
 
     emit selfCheckUpdated(flag);
-}
-
-void Backend::updateMessageBeforeSaving(const bool ok) {
-    const auto flag = CONFIG::writeConfig(
-        {
-            { SYS_CONFIG::DOWNLOAD_SETTINGS::SHOW_MESSAGE_BEFORE_SAVING, ok }
-        }
-    );
-
-    emit messageBeforeSavingUpdated(flag);
 }
 
 void Backend::updateFFmpegPath(const QString& filePath) {
@@ -1082,6 +1086,8 @@ void Backend::updateFFmpegPath(const QString& filePath) {
     );
 
     if (flag) { SharedStorage::instance().getToolsPath()->setFFmpegPath(filePathTrimmed); }
+
+    emit ffmpegPathUpdated(flag);
 }
 
 void Backend::updateNodePath(const QString& filePath) {
@@ -1096,6 +1102,8 @@ void Backend::updateNodePath(const QString& filePath) {
     );
 
     if (flag) { SharedStorage::instance().getToolsPath()->setNodePath(filePathTrimmed); }
+
+    emit nodePathUpdated(flag);
 }
 
 

@@ -186,13 +186,9 @@ void URLInfoManager::analyzeUrlInfo(const QJsonObject& obj) {
 
     const auto hasSubtitles = obj.contains("subtitles") && obj["subtitles"].isObject() && !obj["subtitles"].toObject().isEmpty();
 
-    qDebug() << "Has Subtitles: " << hasSubtitles;
-
     info.insert("hasSubtitles", hasSubtitles);
 
     APP::messageCenter()->sendDebug(QString::fromUtf8(QJsonDocument(info).toJson(QJsonDocument::Indented)));
-
-    qDebug() << QString::fromUtf8(QJsonDocument(info).toJson(QJsonDocument::Indented));
 
     emit jsonReady(info);
 }

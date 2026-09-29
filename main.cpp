@@ -51,20 +51,19 @@ int main(int argc, char *argv[])
 
     // Compare Versions: registeredVersion < currentVersion => clear directory (only for less than v3.0.0)
     const auto _currentVersion = "v3.0.0";
-    const auto _registeredVersion = CONFIG::readConfig<QString>("versions").trimmed();
+    const auto _registeredVersion = CONFIG::readConfig<QString>(SYS_CONFIG::APP_VERSIONS).trimmed();
 
     if (UpdateChecker::versionComparator(_currentVersion, _registeredVersion)) {
         const auto appDataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
         clearDirectory(appDataDir.trimmed());
 
-        CONFIG::writeConfig({ {"versions", _currentVersion} });
+        CONFIG::writeConfig({ {SYS_CONFIG::APP_VERSIONS, _currentVersion} });
 
         // Overwrite Settings
         CONFIG::writeConfig(
             {
-                { SYS_CONFIG::GENERAL_SETTINGS::SELF_CHECK_WHEN_EXECUTE, true },
-                { SYS_CONFIG::DOWNLOAD_SETTINGS::SHOW_MESSAGE_BEFORE_SAVING, true }
+                { SYS_CONFIG::GENERAL_SETTINGS::SELF_CHECK_WHEN_EXECUTE, true }
             }
         );
     }

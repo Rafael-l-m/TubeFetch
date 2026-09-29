@@ -23,20 +23,7 @@ ApplicationWindow {
 
     onClosing: (event) => { backend.requestQuitApp(); event.accepted = true }
 
-    Component.onCompleted: { windowManager.setMainWindow(window) }
-
-    // ======================================================
-    // ======================================================
-    // ======================================================
-    // ======================================================
-    // ======================================================
-    // Change URLInfoManager->analizeInfo() -> Add 'subtitles'
-    // PreferencesWindow -> Redesign Settings
-    // ======================================================
-    // ======================================================
-    // ======================================================
-    // ======================================================
-    // ======================================================
+    Component.onCompleted: { backend.loadSettings(); windowManager.setMainWindow(window) }
 
     menuBar: MenuBar {
         id: menuBar
@@ -81,7 +68,15 @@ ApplicationWindow {
                     color: "#ffffff"
                 }
 
-                onTriggered: { expDt.open() }
+                onTriggered: {
+                    if (mainStackView.currentItem.onlyDownloading || mainStackView.currentItem.allDownloading) {
+                        showInfo.messageText = qsTr("Unable to export data during download")
+                        showInfo.open()
+                        return
+                    }
+
+                    expDt.open()
+                }
             }
 
             MenuItem {
@@ -98,6 +93,12 @@ ApplicationWindow {
                 }
 
                 onTriggered: {
+                    if (mainStackView.currentItem.onlyDownloading || mainStackView.currentItem.allDownloading) {
+                        showInfo.messageText = qsTr("Unable to import data during download")
+                        showInfo.open()
+                        return
+                    }
+
                     if (mainStackView.currentItem.downloadList.downloadListView.count > 0) {
                         showInfo.messageText = qsTr("Importing data requires clearing the list")
                         showInfo.open()
@@ -105,7 +106,6 @@ ApplicationWindow {
                     }
 
                     impDt.open()
-
                 }
             }
 
@@ -122,7 +122,15 @@ ApplicationWindow {
                     color: "#ffffff"
                 }
 
-                onTriggered: { expOpt.open() }
+                onTriggered: {
+                    if (mainStackView.currentItem.onlyDownloading || mainStackView.currentItem.allDownloading) {
+                        showInfo.messageText = qsTr("Unable to export outputs during download")
+                        showInfo.open()
+                        return
+                    }
+
+                    expOpt.open()
+                }
             }
 
             MenuSeparator { }
@@ -140,7 +148,15 @@ ApplicationWindow {
                     color: "#ffffff"
                 }
 
-                onTriggered: { backend.clearAllDownloadStatus() }
+                onTriggered: {
+                    if (mainStackView.currentItem.onlyDownloading || mainStackView.currentItem.allDownloading) {
+                        showInfo.messageText = qsTr("Unable to clear download status during download")
+                        showInfo.open()
+                        return
+                    }
+
+                    backend.clearAllDownloadStatus()
+                }
             }
 
             MenuItem {
@@ -158,6 +174,7 @@ ApplicationWindow {
 
                 onTriggered: {
                     backend.removeAllDownloadUrlInfo()
+
                     showInfo.messageText = qsTr("Successfully cleared caches")
                     showInfo.open()
                 }
@@ -176,6 +193,16 @@ ApplicationWindow {
                     verticalAlignment: Text.AlignVCenter
 
                     color: "#ffffff"
+                }
+
+                onTriggered: {
+                    if (mainStackView.currentItem.onlyDownloading || mainStackView.currentItem.allDownloading) {
+                        showInfo.messageText = qsTr("Unable to access preferences page during download")
+                        showInfo.open()
+                        return
+                    }
+
+                    mainStackView.push(Qt.resolvedUrl("qml/pages/preferencespage/PreferencesPage.qml"))
                 }
             }
 
@@ -203,7 +230,7 @@ ApplicationWindow {
 
             Material.background: "#6b6b6b"
 
-            implicitHeight: Math.min(contentItem.implicitHeight, 300)
+            // implicitHeight: Math.min(contentItem.implicitHeight, 300)
 
             MenuItem {
                 text: qsTr("English (US)")
@@ -217,6 +244,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("en_US") }
             }
 
             MenuItem {
@@ -231,6 +260,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("en_GB") }
             }
 
             MenuItem {
@@ -245,6 +276,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("zh_CN") }
             }
 
             MenuItem {
@@ -259,8 +292,11 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("es_ES") }
             }
 
+            /*
             MenuItem {
                 text: qsTr("Português")
 
@@ -273,6 +309,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("pt_PT") }
             }
 
             MenuItem {
@@ -287,6 +325,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("fr_FR") }
             }
 
             MenuItem {
@@ -301,6 +341,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("it_IT") }
             }
 
             MenuItem {
@@ -315,6 +357,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("de_DE") }
             }
 
             MenuItem {
@@ -329,6 +373,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("ru_RU") }
             }
 
             MenuItem {
@@ -343,6 +389,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("uk_UA") }
             }
 
             MenuItem {
@@ -357,6 +405,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("ko_KR") }
             }
 
             MenuItem {
@@ -371,6 +421,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("ja_JP") }
             }
 
             MenuItem {
@@ -385,48 +437,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
-            }
 
-            MenuItem {
-                text: qsTr("Bokmål")
-
-                height: 40
-
-                contentItem: Text {
-                    text: parent.text
-
-                    verticalAlignment: Text.AlignVCenter
-
-                    color: "#ffffff"
-                }
-            }
-
-            MenuItem {
-                text: qsTr("Suomi")
-
-                height: 40
-
-                contentItem: Text {
-                    text: parent.text
-
-                    verticalAlignment: Text.AlignVCenter
-
-                    color: "#ffffff"
-                }
-            }
-
-            MenuItem {
-                text: qsTr("Svenska")
-
-                height: 40
-
-                contentItem: Text {
-                    text: parent.text
-
-                    verticalAlignment: Text.AlignVCenter
-
-                    color: "#ffffff"
-                }
+                onTriggered: { languageManager.setLanguage("th_TH") }
             }
 
             MenuItem {
@@ -441,6 +453,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("ar_SA") }
             }
 
             MenuItem {
@@ -455,6 +469,8 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("zh_TW") }
             }
 
             MenuItem {
@@ -469,7 +485,10 @@ ApplicationWindow {
 
                     color: "#ffffff"
                 }
+
+                onTriggered: { languageManager.setLanguage("zh_LIT") }
             }
+            */
         }
 
         Menu {
@@ -614,7 +633,7 @@ ApplicationWindow {
 
         title: qsTr("Export Outputs")
 
-        nameFilters: ["*.txt"]
+        nameFilters: ["*.txt", "*.*"]
 
         onAccepted: {
             loading.running = true
@@ -629,6 +648,12 @@ ApplicationWindow {
     Comp.MessageDialog { id: showUpdateInfo; b_askType: false; width: 500; height: 300 }
 
     Comp.LoadingOverlay { id: loading; overlayWidth: window.width; overlayHeight: window.height }
+
+    Connections {
+        target: languageManager
+
+        function onLanguageChanged() { Qt.uiLanguage = languageManager.getLanguage() }
+    }
 
     Connections {
         target: backend
@@ -678,7 +703,6 @@ ApplicationWindow {
             }
         }
     }
-
 
     function modelToTxt() {
         let text = ""

@@ -13,7 +13,7 @@ Rectangle {
     property string videoItag: ""
     property string nonDashItag: ""
 
-    id: background
+    id: addNewDownloadPage
 
     color: "transparent"
 
@@ -32,7 +32,7 @@ Rectangle {
     Component.onCompleted: {
         backend.cleanDownloadUrlInfo()
 
-        if (background.editMode && background.internalIdd !== 0) { backend.requestEditInformation(background.internalIdd) }
+        if (addNewDownloadPage.editMode && addNewDownloadPage.internalIdd !== 0) { backend.requestEditInformation(addNewDownloadPage.internalIdd) }
     }
 
     ColumnLayout {
@@ -79,7 +79,7 @@ Rectangle {
                     placeholderText: qsTr("Enter download address ...")
 
                     onTextChanged: {
-                        if (background.editMode) { return }
+                        if (addNewDownloadPage.editMode) { return }
 
                         if (textFieldURL.text.trim().length === 0) {
                             textFieldURL.text = ""
@@ -94,7 +94,7 @@ Rectangle {
                     }
 
                     extraTimer.onTriggered: {
-                        if (background.editMode) { return }
+                        if (addNewDownloadPage.editMode) { return }
 
                         const url = textFieldURL.text.trim()
 
@@ -246,7 +246,7 @@ Rectangle {
                         hideMode5.visible = false
                         hideMode6.visible = false
 
-                        if (background.editMode) { textFieldSaveAs.text = "" }
+                        if (addNewDownloadPage.editMode) { textFieldSaveAs.text = "" }
                     }
 
                     onPopupOpened: {
@@ -647,7 +647,7 @@ Rectangle {
                     loading.running = true
                     loading.visible = true
 
-                    if (background.editMode) { backend.editDownload(background.internalIdd, url, title, ac, vc, ndc, ba, bv, sp, sp, met, subt) }
+                    if (addNewDownloadPage.editMode) { backend.editDownload(addNewDownloadPage.internalIdd, url, title, ac, vc, ndc, ba, bv, sp, sp, met, subt) }
 
                     else { backend.addNewDownload(url, title, ac, vc, ndc, ba, bv, sp, sp, met, subt) }
                 }
@@ -729,7 +729,7 @@ Rectangle {
 
     Comp.Toast { id: toast }
 
-    Comp.LoadingOverlay { id: loading; overlayWidth: background.width; overlayHeight: background.height }
+    Comp.LoadingOverlay { id: loading; overlayWidth: addNewDownloadPage.width; overlayHeight: addNewDownloadPage.height }
 
     function disableInnecessaryComponents() {
         textFieldURL.readOnly = true
@@ -794,7 +794,7 @@ Rectangle {
 
     Connections {
         target: backend
-        enabled: background.visible
+        enabled: addNewDownloadPage.visible
 
         function onUrlCut(url) { textFieldURL.text = url.trim() }
 
@@ -819,6 +819,7 @@ Rectangle {
             const audio_arr = []
             const video_arr = []
             const non_dash_arr = info.non_dash_formats
+            const hasSubtitles = info.hasSubtitles
 
             for (let aud of info.mpeg_dash_audio_formats) { audio_arr.push(aud) }
             for (let vid of info.mpeg_dash_video_formats) { video_arr.push(vid) }
@@ -832,20 +833,25 @@ Rectangle {
             videoCodecComboBox.model = video_arr
             nonDashCodecComboBox.model = non_dash_arr
 
-            if (background.editMode) {
-                if (background.audioItag.trim() !== "")   {
+            if (!hasSubtitles) {
+                subtitlesCodecComboBox.model = [qsTr("Without Subtitles")]
+                subtitlesCodecComboBox.currentIndex = 0
+            }
+
+            if (addNewDownloadPage.editMode) {
+                if (addNewDownloadPage.audioItag.trim() !== "")   {
                     audioCodecComboBox.currentIndex =
-                        audioCodecComboBox.find(background.audioItag.trim())
+                        audioCodecComboBox.find(addNewDownloadPage.audioItag.trim())
                 }
 
-                if (background.videoItag.trim() !== "")   {
+                if (addNewDownloadPage.videoItag.trim() !== "")   {
                     videoCodecComboBox.currentIndex =
-                        videoCodecComboBox.find(background.videoItag.trim())
+                        videoCodecComboBox.find(addNewDownloadPage.videoItag.trim())
                 }
 
-                if (background.nonDashItag.trim() !== "") {
+                if (addNewDownloadPage.nonDashItag.trim() !== "") {
                     nonDashCodecComboBox.currentIndex =
-                        nonDashCodecComboBox.find(background.nonDashItag.trim())
+                        nonDashCodecComboBox.find(addNewDownloadPage.nonDashItag.trim())
                 }
             }
         }
@@ -880,7 +886,7 @@ Rectangle {
         }
 
         function onEditInformationRequest(obj, message) {
-            if (background.editMode && background.internalIdd !== 0 && obj.internalId === background.internalIdd) {
+            if (addNewDownloadPage.editMode && addNewDownloadPage.internalIdd !== 0 && obj.internalId === addNewDownloadPage.internalIdd) {
                 textFieldURL.text = obj.url.trim()
                 textFieldURL.readOnly = true
                 searchInfoBtn.enabled = false
@@ -893,9 +899,9 @@ Rectangle {
 
                 else {
                     modeComboBox.currentIndex = 2
-                    background.audioItag = obj.audioCode.trim()
-                    background.videoItag = obj.videoCode.trim()
-                    background.nonDashItag = obj.nonDashCode.trim()
+                    addNewDownloadPage.audioItag = obj.audioCode.trim()
+                    addNewDownloadPage.videoItag = obj.videoCode.trim()
+                    addNewDownloadPage.nonDashItag = obj.nonDashCode.trim()
                 }
 
                 delayTimer.restart()

@@ -7,7 +7,7 @@ import "../../download" as Do
 Rectangle {
     readonly property bool showMenuBar: true
 
-    property bool selfCheckWhenStart: false
+    property bool selfCheckWhenStart: true
     property bool onlyDownloading: false
     property bool allDownloading: false
 
@@ -17,17 +17,6 @@ Rectangle {
     id: background
 
     color: "transparent"
-
-    Component.onCompleted: {
-        if (background.selfCheckWhenStart) {
-            loading.running = true
-            loading.visible = true
-
-            backend.checkTools()
-        }
-
-        else { backend.loadTools() }
-    }
 
     ColumnLayout {
         id: columnLayout
@@ -46,17 +35,52 @@ Rectangle {
 
             Item { Layout.fillWidth: true }
 
-            Comp.LiquidGlassButton { id: startBtn; text: qsTr("Start"); enabled: true }
+            Comp.LiquidGlassButton {
+                id: startBtn
+
+                text: qsTr("Start")
+
+                implicitWidth: 220
+
+                enabled: !background.onlyDownloading && !background.allDownloading && downloadList.downloadListView.count > 0
+
+                onClicked: {
+                    if (background.onlyDownloading) {
+                        toast.show(qsTr("One file is downloading. Please wait for finished"))
+                        return
+                    }
+
+                    if (background.allDownloading) {
+                        toast.show(qsTr("Other files are downloading. Please wait for finished"))
+                        return
+                    }
+
+                    background.onlyDownloading = false
+                    background.allDownloading = true
+
+                    backend.startDownload()
+                }
+            }
 
             Item { Layout.fillWidth: true }
 
-            Comp.LiquidGlassButton { id: stopBtn; text: qsTr("Stop"); enabled: false }
+            Comp.LiquidGlassButton {
+                id: stopBtn
+
+                text: qsTr("Stop")
+
+                implicitWidth: 220
+
+                enabled: background.onlyDownloading || background.allDownloading
+
+                onClicked: { backend.stopDownload() }
+            }
 
             Item { Layout.fillWidth: true }
 
-            Comp.LiquidGlassButton { id: showInformation; text: qsTr("Show Info") }
+            // Comp.LiquidGlassButton { id: showInformation; text: qsTr("Show Info") }
 
-            Item { Layout.fillWidth: true }
+            // Item { Layout.fillWidth: true }
         }
 
         ColumnLayout {
@@ -82,8 +106,24 @@ Rectangle {
 
                 onRemoveDownloadRequest: function(idd) { backend.removeDownload(idd) }
 
-                onStartDownloadRequest:  function(idd) { console.log("Start item: ", idd)  }
-                onStopDownloadRequest:   function(idd) { console.log("Stop item: ", idd)   }
+                onStartDownloadRequest: function(idd) {
+                    if (background.onlyDownloading) {
+                        toast.show(qsTr("One file is downloading. Please wait for finished"))
+                        return
+                    }
+
+                    if (background.allDownloading) {
+                        toast.show(qsTr("Other files are downloading. Please wait for finished"))
+                        return
+                    }
+
+                    background.onlyDownloading = true
+                    background.allDownloading = false
+
+                    backend.startDownload(idd)
+                }
+
+                onStopDownloadRequest: function(idd) { backend.stopDownload(idd) }
             }
 
             Comp.LiquidGlassTerminalView {
@@ -92,10 +132,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                // model: terminalModelList
-                onCommandEntered: function(command) {
-                    console.log("New Command: ", command)
-                }
+                onCommandEntered: function(command) { }
             }
         }
 
@@ -124,6 +161,8 @@ Rectangle {
                 id: removeAllDownloads
 
                 text: qsTr("Remove All Downloads")
+
+                enabled: downloadList.downloadListView.count > 0 && !background.onlyDownloading && !background.allDownloading
 
                 implicitWidth: 300
 
@@ -198,30 +237,11 @@ Rectangle {
     Connections {
         target: messageCenter
 
-        function onDebugSent(message)   {
-            terminalView.addDebug(message)
-            console.log("Debug: ", message)
-        }
-
-        function onInfoSent(message)    {
-            terminalView.addInfo(message)
-            console.log("Info: ", message)
-        }
-
-        function onWarningSent(message) {
-            terminalView.addWarning(message)
-            console.log("Warning: ", message)
-        }
-
-        function onErrorSent(message)   {
-            terminalView.addError(message)
-            console.log("Error: ", message)
-        }
-
-        function onOutputSent(message)  {
-            terminalView.addOutput(message)
-            console.log("Output: ", message)
-        }
+        function onDebugSent(message) { terminalView.addDebug(message) }
+        function onInfoSent(message) { terminalView.addInfo(message) }
+        function onWarningSent(message) { terminalView.addWarning(message) }
+        function onErrorSent(message) { terminalView.addError(message) }
+        function onOutputSent(message)  { terminalView.addOutput(message) }
     }
 
     Connections {
@@ -236,9 +256,7 @@ Rectangle {
                 backend.checkTools()
             }
 
-            else {
-                backend.loadTools()
-            }
+            else { backend.loadTools() }
         }
     }
 
@@ -325,5 +343,57 @@ Rectangle {
         }
 
         function onPoTokenProviderStarted(ok) { if (ok) { downloadPoTokenProvider.progressValue = 1 } }
+
+        function onIsAlreadyDownloading(internalId, message) { showInfo.messageText = message.trim(); showInfo.open() }
+
+        function onIsNotDownloading(internalId, message) { showInfo.messageText = message.trim(); showInfo.open() }
+
+        function onDownloadFinished(internalId) { if (background.onlyDownloading) { background.onlyDownloading = false } }
+
+        function onDownloadStopped(internalId, ok, message) {
+            if (ok) {
+                if (background.onlyDownloading) {
+                    background.onlyDownloading = false
+                }
+
+                else { background.allDownloading = false }
+            }
+
+            showInfo.messageText = message.trim()
+            showInfo.open()
+        }
+
+        function onDownloadErrorOccurred(internalId, message) {
+            if (background.onlyDownloading) { background.onlyDownloading = false }
+
+            toast.show(message.trim())
+        }
+
+        function onSubprocessErrorOccurred(internalId, message) {
+            if (background.onlyDownloading) { background.onlyDownloading = false }
+
+            toast.show(message.trim())
+        }
+
+        function onFailedAtStart(internalId) {
+            if (background.onlyDownloading) { background.onlyDownloading = false }
+
+            toast.show(qsTr("Download failed started"))
+        }
+
+        function onAllDownloadFinished() {
+            showInfo.messageText = qsTr("All downloads finished")
+            showInfo.open()
+
+            background.onlyDownloading = false
+            background.allDownloading = false
+        }
+
+        function onAllDownloadStopped() {
+            toast.show(qsTr("All downloads stopped"))
+
+            background.onlyDownloading = false
+            background.allDownloading = false
+        }
     }
 }

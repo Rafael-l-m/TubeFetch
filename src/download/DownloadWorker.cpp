@@ -74,6 +74,7 @@ void DownloadWorker::start() {
         const auto _savePath = this->m_task->getSavePath().trimmed();
         const auto _suf = this->m_task->getSuffix().trimmed();
         const auto _met = this->m_task->getMetadata();
+        const auto _subt = this->m_task->getSubtitles();
 
         QStringList arguments;
         arguments << "--ffmpeg-location" << ffmpegPath
@@ -152,6 +153,12 @@ void DownloadWorker::start() {
                 arguments.append("--merge-output-format");
                 arguments.append(_suf);
             }
+        }
+
+        if (_subt) {
+            arguments << "--write-subs"
+                      << "--sub-langs" << "all"
+                      << "--embed-subs";
         }
 
         const auto _url = URLInfoManager::cutUrl(__url);

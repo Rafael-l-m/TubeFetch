@@ -130,8 +130,8 @@ public:
 
     // Settings
     Q_INVOKABLE void loadSettings();
+    Q_INVOKABLE void loadSettingsPreferencesPage();
     Q_INVOKABLE void updateSelfCheck(bool ok);
-    Q_INVOKABLE void updateMessageBeforeSaving(bool ok);
     Q_INVOKABLE void updateFFmpegPath(const QString& filePath);
     Q_INVOKABLE void updateNodePath(const QString& filePath);
 
@@ -195,8 +195,10 @@ signals:
 
     // Settings
     void settingsLoaded(const QJsonObject& obj);
+    void settingsLoadedPreferencesPage(const QJsonObject& obj);
     void selfCheckUpdated(bool ok);
-    void messageBeforeSavingUpdated(bool ok);
+    void ffmpegPathUpdated(bool ok);
+    void nodePathUpdated(bool ok);
 
 private:
     void usageSince(qint64 timestamp, std::function<void(int)> cb);
