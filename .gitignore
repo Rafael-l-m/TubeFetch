@@ -86,6 +86,7 @@ CMakeLists.txt.user*
 *.qmlc
 *.jsc
 *.dylib
+*.qm
 
 # CMake
 CMakeFiles/

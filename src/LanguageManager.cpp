@@ -1,5 +1,6 @@
 #include <core/APP.hpp>
 #include <core/BasicTools.hpp>
+#include <core/Constants.hpp>
 #include <LanguageManager.hpp>
 
 
@@ -40,7 +41,7 @@ void LanguageManager::setLanguage(const QString& newLanguage) {
 
         this->m_language = _newLanguage;
 
-        CONFIG::writeConfig( { {"languages", _newLanguage} } );
+        CONFIG::writeConfig( { {SYS_CONFIG::LANGUAGE, _newLanguage} } );
 
         emit languageChanged();
     }

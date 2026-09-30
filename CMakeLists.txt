@@ -124,9 +124,9 @@ if (APPLE)
         "${CMAKE_SOURCE_DIR}/resources/HelpDoc_v3_0_0.pdf"
         "$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/HelpDoc.pdf"
 
-        #COMMAND ${CMAKE_COMMAND} -E copy_directory
-        #${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
-        #$<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/translations
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources/translations/ForMachine
+        $<TARGET_BUNDLE_DIR:TubeFetch>/Contents/Resources/translations
     )
 
 elseif (WIN32)
