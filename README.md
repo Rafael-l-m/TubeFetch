@@ -426,7 +426,6 @@ Before running the application, make sure that local port 4416 is available. Thi
 # Usage
 
 1. First Launch Interface:
-
         - On the first launch, the system will open the external tools detection page first. For users
 who downloaded the tools according to the tutorial, the system can automatically detect their
 installation locations and configure the paths. Users who downloaded the tools manually must
@@ -437,14 +436,12 @@ their actual paths may be symbolic links pointing to the actual executable files
 links may cause the program to incorrectly identify the file. Even if the system reports that the
 selected file is not executable, the path in the input field will not be cleared, so you can simply
 click "Confirm").
-
     -  After the user confirms the relevant settings, the system will load the main interface. If the two
 required components, yt-dlp and bgutil-pot-ytdlp-provider, are not detected during startup, the
 system will automatically display a download dialog prompting the user to install them. These
 components are required dependencies for the application to function properly. If the user
 declines the installation or the download cannot be completed, the system will automatically
 exit the application to ensure the integrity and stability of the runtime environment.
-
         - Once the required components have been downloaded, the system will automatically open the
 main interface.
 
@@ -455,35 +452,29 @@ which displays the current download tasks and their status in real time. The mid
 provides a terminal-like interface for displaying system output and execution logs. The bottom section 
 contains two main action buttons for quick access to core functions (add download /
 delete all downloads).
-
         - The bottom of the interface provides two action buttons: `Add New Download` and `Remove All Downloads`. 
 The `Remove All Downloads` button is enabled only when download tasks exist. When the
 download list is empty, the button is automatically disabled to prevent ineffective operations.
 The `Add New Download` button remains enabled at all times, allowing users to open the New
 Download interface and create a new download task at any time.
-
    - The terminal-style area displays debugging information, standard output, error messages, warnings, 
 and general execution logs while the system is running. A green arrow button at the bottom of the 
 area allows users to enter commands for a terminal-like experience. This feature
 has been available since v2 and is currently used primarily to display system output; full command 
 interaction is not yet supported. This module will be further improved in v4.1.0 and will
-gradually support full command interaction.
-   
+gradually support full command interaction. 
    - The display area shows all current download items in a list. Each download item provides four
 buttons for editing, deleting, starting, and ending the task, respectively. Operations such as
 editing and deleting remain available while a download is in progress. However, once a download 
 has started, any subsequent changes to the task configuration will not affect the download
 currently in progress. In other words, the new configuration displayed in the interface may
 differ from the configuration actually being used for the download. Please keep this in mind.
-
    - Of the two buttons at the top of the interface, the `Stop` button is enabled only when the system
 is in download mode and is used to terminate download tasks currently in progress. Download
 mode is activated when the user clicks `Start` and is divided into two mutually exclusive modes:
      - Single Download mode: the user must click the download button corresponding to a
 specific download item, and the system will download only that item.
-
      - Download All mode: after clicking the download button at the top, the system downloads all download items sequentially.
-
      - In Single Download mode, the user can click the `Stop` button for a specific download item.
 The system will determine whether the task is currently downloading and, if so, stop it immediately. 
 The user can also use the `Stop` button at the top to stop the current download.
@@ -491,7 +482,6 @@ In Download All mode, the system does not support stopping an individual downloa
 user must use the `Stop` button to stop all download tasks currently in progress.
 
 3. New Download Interface: consists of three main sections: the Link section, the Configuration section, and the Output section.
-
         - The Link section is divided into two rows. The first row contains an editable input field
 for entering the resource URL, supporting both manual entry and pasting, as well as a
 button for parsing the link information. After approximately three seconds without input,
@@ -510,11 +500,9 @@ also contains a non-editable input field that displays the title associated with
 URL. You can proceed with the remaining configuration only when the title is not `Error`.
 If `Error` is displayed, check whether the URL is correct. (Downloading YouTube videos
 that require payment to watch is currently not supported.)
-   
     - After the link configuration is complete, the system will enter the download configuration
 section. There are three configuration modes: `Best Video`, `Best Audio`, and `Personalized`. When
 the user switches to `Personalized` mode, additional dropdown options will be displayed.
-   
     - The dropdown options in the configuration area include `audio codecs`, `video codecs`, and
 `non-DASH stream codecs`. `Audio codecs`, `video codecs`, and `non-DASH stream codecs` are
 mutually exclusive: users must choose between `Non-DASH` and `Audio / Video Codec`,
@@ -525,7 +513,6 @@ include metadata in downloaded content. If the parsing results contain manually 
 subtitles, a `subtitle` option will be displayed; otherwise, the subtitle option will not be
 provided by default. (Support for machine-translated subtitles provided by the platform
 will be gradually added in v4.1.0.)
-
     - In the output section, users can set the output path for downloaded files. Click the path
 input field to select the destination directory. Linux users should pay particular attention
 to the following: the system does not automatically append the container extension to the
@@ -533,7 +520,6 @@ output file, so the complete filename must be specified manually. For example, i
 want the output to be in MP3 format, the filename must explicitly be entered as test.mp3
 rather than simply test. Although the file filter in the interface displays MP3, omitting the
 file extension may cause errors during the download or cause the task to fail.
-
     - After clicking `Continue`, the system will attempt to write the current configuration to
 the database. If the data is written successfully, the interface will automatically return to
 the main page. If the operation fails, the system will display a message explaining the
@@ -545,7 +531,6 @@ existing record.
 	        - The `Export Data` feature is used to export all current download items, including task
 configuration, progress status, and other related information, to a file. Users can
 choose `.dat` or `.data` as the output file extension.
-
         - The `Import Data` feature is used to restore the download task list and its associated
 status information from an external file. To ensure data consistency and prevent data
 conflicts, the system requires all existing download items to be cleared before importing. 
@@ -553,44 +538,34 @@ When the download list is empty, the user can perform the import operation
 to load task records from `.dat` or `.data` files into the system. If download items still
 exist, the import feature will remain disabled, and the user must clear the download
 list before proceeding.
-
         - The `Export Outputs` allows all information displayed in the terminal-style area to be
 exported as a plain text file `.txt` or another supported file format for saving, viewing,
 or further analysis.
-      
         - The `Clear Download Status` feature resets the status indicators of download items.
 After this operation is performed, all tasks currently marked as `Downloaded` will
 be reset to `Not Downloaded`, allowing users to download or manage them again.
 This operation only changes the task status and does not affect any output files that
 have already been generated. All downloaded files will remain in their original output
 paths and will not be deleted or overwritten.
-
         - The `Clear Cache` feature deletes all stored resource link information.
-
-        - Click `Settings` to open the Settings page directly. (On macOS, the location of this
+	- Click `Settings` to open the Settings page directly. (On macOS, the location of this
 option may vary depending on the selected language. If you cannot find `Settings` in
 the `File` menu, click `TubeFetch` in the menu bar to locate the corresponding option).
-
         - The `Exit` feature safely closes the application. After this operation is performed, the
 system will immediately terminate the current process and return to the operating
 system. Exiting does not affect existing download items, configuration data, or files
 that have already been generated; all data remains unchanged. (On macOS, the location 
 of this option may vary depending on the selected language. If you cannot find 
 `Settings` in the `File` menu, click `TubeFetch` in the menu bar to locate the corresponding option).
-
         - Language
 	        - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
-
-                - The following languages are supported:
-
-                        - British English.
+		- The following languages are supported:
+		        - British English.
 			- American English.
 	    - Simplified Chinese.
 	    - Spanish.
-    
-        - Starting with v4.1.0, support for the following languages will be introduced gradually:
-
-                        - Portuguese.
+	- Starting with v4.1.0, support for the following languages will be introduced gradually:
+	                - Portuguese.
 			- French.
 	    - Italian.
 	    - German.
@@ -605,10 +580,8 @@ of this option may vary depending on the selected language. If you cannot find
 	    - Norwegian.
 	    - Swedish.
 	    - Finnish.
-
-        - Help:
-
-                - Visit the project repository.
+	- Help:
+	        - Visit the project repository.
 		- Help Documentation.
 	- Check for Updates.
 	- Report Issues.
