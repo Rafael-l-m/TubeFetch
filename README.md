@@ -426,6 +426,7 @@ Before running the application, make sure that local port 4416 is available. Thi
 # Usage
 
 1. First Launch Interface:
+
         - On the first launch, the system will open the external tools detection page first. For users
 who downloaded the tools according to the tutorial, the system can automatically detect their
 installation locations and configure the paths. Users who downloaded the tools manually must
@@ -446,6 +447,7 @@ exit the application to ensure the integrity and stability of the runtime enviro
 main interface.
 
 2. Main Interface:
+
         - The main interface uses a top-to-bottom sectioned layout. The top section contains two function
 buttons for common operations (start download / end download). Below it is the download list,
 which displays the current download tasks and their status in real time. The middle section
@@ -482,6 +484,7 @@ In Download All mode, the system does not support stopping an individual downloa
 user must use the `Stop` button to stop all download tasks currently in progress.
 
 3. New Download Interface: consists of three main sections: the Link section, the Configuration section, and the Output section.
+
         - The Link section is divided into two rows. The first row contains an editable input field
 for entering the resource URL, supporting both manual entry and pasting, as well as a
 button for parsing the link information. After approximately three seconds without input,
@@ -527,6 +530,7 @@ specific reason. Common causes include a duplicate output path or a conflict wit
 existing record.
 
 4. Menu Bar:
+
         - File:
 	        - The `Export Data` feature is used to export all current download items, including task
 configuration, progress status, and other related information, to a file. Users can
