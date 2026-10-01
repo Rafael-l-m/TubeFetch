@@ -183,28 +183,28 @@ You can download these tools manually and add them to the system’s PATH enviro
 -    Install Xcode Command Line Tools:
 
 ```bash
-	xcode-select --install
+        xcode-select --install
 ```
 
 -    Install Homebrew:
 
 ```bash
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 -    Install required tools:
 
 ```bash
-	brew update
+        brew update
 ```
 ```bash
-	brew upgrade
+        brew upgrade
 ```
 ```bash
-	brew install ffmpeg
+        brew install ffmpeg
 ```
 ```bash
-	brew install node
+        brew install node
 ```
 
 <br>
@@ -216,7 +216,7 @@ You can download these tools manually and add them to the system’s PATH enviro
 -	Install Xcode Command Line Tools:
 
 ```bash
-	xcode-select --install
+        xcode-select --install
 ```
 
 -    Install [MacPorts](https://www.macports.org/)
@@ -224,19 +224,19 @@ You can download these tools manually and add them to the system’s PATH enviro
 -    Install required tools:
 
 ```bash
-	sudo port selfupdate
+        sudo port selfupdate
 ```
 ```bash
-	sudo port upgrade outdated
+        sudo port upgrade outdated
 ```
 ```bash
-	sudo port install ffmpeg
+        sudo port install ffmpeg
 ```
 ```bash
-	sudo port install node22
+        sudo port install node22
 ```
 ```bash
-	sudo port install npm10
+        sudo port install npm10
 ```
 
 <br>
@@ -248,25 +248,25 @@ You can download these tools manually and add them to the system’s PATH enviro
 -    Install Scoop:
 
 ```Powershell
-	Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+        Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 ```Powershell
-	iwr -useb get.scoop.sh | iex
+        iwr -useb get.scoop.sh | iex
 ```
 
 -    Install required tools:
 
 ```bash
-	scoop update
+        scoop update
 ```
 ```bash
-	scoop update *
+        scoop update *
 ```
 ```bash
-	scoop install ffmpeg
+        scoop install ffmpeg
 ```
 ```bash
-	scoop install nodejs-lts
+        scoop install nodejs-lts
 ```
 
 <br>
@@ -279,46 +279,46 @@ You can download these tools manually and add them to the system’s PATH enviro
 
 - - Ubuntu / Debian:
 ```bash
-	sudo apt install -y build-essential procps curl file git
+        sudo apt install -y build-essential procps curl file git
 ```
 
 
 - - Fedora / CentOS / RHEL:
 ```bash
-	sudo dnf groupinstall "Development Tools" && sudo dnf install procps-ng curl file git
+        sudo dnf groupinstall "Development Tools" && sudo dnf install procps-ng curl file git
 ```
 
 
 - - Arch:
 ```bash
-	sudo pacman -S base-devel procps-ng curl file git
+        sudo pacman -S base-devel procps-ng curl file git
 ```
 
 -    Install Homebrew:
 
 ```bash
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 ```bash
-	echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" ' >> ~/.bashrc
+        echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" ' >> ~/.bashrc
 ```
 ```bash
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 
 -    Install required tools:
 
 ```bash
-	brew update
+        brew update
 ```
 ```bash
-	brew upgrade
+        brew upgrade
 ```
 ```bash
-	brew install ffmpeg
+        brew install ffmpeg
 ```
 ```bash
-	brew install node
+        brew install node
 ```
 
 
@@ -333,36 +333,36 @@ Before running the application, make sure that local port 4416 is available. Thi
 
 - Check whether a port is in use using lsof
 ```bash
-	lsof -i :4416
+        lsof -i :4416
 ```
 
 - Force-Kill the process with specified PID (e.g., 1234)
 ```bash
-	kill -9 1234
+        kill -9 1234
 ```
 
 ### Windows:
 
 - Check whether a port is in use using Get-NetTCPConnection (PowerShell)
 ```Powershell
-	Get-NetTCPConnection -LocalPort 4416
+        Get-NetTCPConnection -LocalPort 4416
 ```
 
 - Force-Kill the process with the specified PID (e.g., 1234) (PowerShell)
 ```Powershell
-	Stop-Process -Id 1234 -Force
+        Stop-Process -Id 1234 -Force
 ```
 
 ### Linux:
 
 - Check whether a port is in use using ss
 ```bash
-	ss -tulnp | grep 4416
+        ss -tulnp | grep 4416
 ```
 
 - Force-Kill the process with the specified PID (e.g., 1234)
 ```bash
-	kill -9 1234
+        kill -9 1234
 ```
 
 
@@ -427,7 +427,7 @@ Before running the application, make sure that local port 4416 is available. Thi
 
 1. First Launch Interface:
 
-	- On the first launch, the system will open the external tools detection page first. For users
+        - On the first launch, the system will open the external tools detection page first. For users
 who downloaded the tools according to the tutorial, the system can automatically detect their
 installation locations and configure the paths. Users who downloaded the tools manually must
 select or enter the actual installation paths of the external tools on this page to ensure that
@@ -445,18 +445,18 @@ components are required dependencies for the application to function properly. I
 declines the installation or the download cannot be completed, the system will automatically
 exit the application to ensure the integrity and stability of the runtime environment.
 
-	- Once the required components have been downloaded, the system will automatically open the
+        - Once the required components have been downloaded, the system will automatically open the
 main interface.
 
 2. Main Interface:
-	- The main interface uses a top-to-bottom sectioned layout. The top section contains two function
+        - The main interface uses a top-to-bottom sectioned layout. The top section contains two function
 buttons for common operations (start download / end download). Below it is the download list,
 which displays the current download tasks and their status in real time. The middle section
 provides a terminal-like interface for displaying system output and execution logs. The bottom section 
 contains two main action buttons for quick access to core functions (add download /
 delete all downloads).
 
-	- The bottom of the interface provides two action buttons: `Add New Download` and `Remove All Downloads`. 
+        - The bottom of the interface provides two action buttons: `Add New Download` and `Remove All Downloads`. 
 The `Remove All Downloads` button is enabled only when download tasks exist. When the
 download list is empty, the button is automatically disabled to prevent ineffective operations.
 The `Add New Download` button remains enabled at all times, allowing users to open the New
@@ -492,7 +492,7 @@ user must use the `Stop` button to stop all download tasks currently in progress
 
 3. New Download Interface: consists of three main sections: the Link section, the Configuration section, and the Output section.
 
-	- The Link section is divided into two rows. The first row contains an editable input field
+        - The Link section is divided into two rows. The first row contains an editable input field
 for entering the resource URL, supporting both manual entry and pasting, as well as a
 button for parsing the link information. After approximately three seconds without input,
 the field loses focus. Once focus is lost, the system automatically removes unnecessary
@@ -541,8 +541,8 @@ specific reason. Common causes include a duplicate output path or a conflict wit
 existing record.
 
 4. Menu Bar:
-	- File:
-		- The `Export Data` feature is used to export all current download items, including task
+        - File:
+	        - The `Export Data` feature is used to export all current download items, including task
 configuration, progress status, and other related information, to a file. Users can
 choose `.dat` or `.data` as the output file extension.
 
@@ -578,40 +578,40 @@ that have already been generated; all data remains unchanged. (On macOS, the loc
 of this option may vary depending on the selected language. If you cannot find 
 `Settings` in the `File` menu, click `TubeFetch` in the menu bar to locate the corresponding option).
 
-	- Language
-   		- The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
+        - Language
+	        - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
 
-		- The following languages are supported:
+                - The following languages are supported:
 
-			- British English.
-            - American English.
-            - Simplified Chinese.
-            - Spanish.
+                        - British English.
+			- American English.
+	    - Simplified Chinese.
+	    - Spanish.
     
         - Starting with v4.1.0, support for the following languages will be introduced gradually:
 
-			- Portuguese.
-            - French.
-            - Italian.
-            - German.
-            - Russian.
-            - Ukrainian.
-            - Korean.
-            - Japanese.
-            - Thai.
-            - Traditional Chinese.
-            - Classical Chinese.
-            - Arabic.
-            - Norwegian.
-            - Swedish.
-            - Finnish.
+                        - Portuguese.
+			- French.
+	    - Italian.
+	    - German.
+	    - Russian.
+	    - Ukrainian.
+	    - Korean.
+	    - Japanese.
+	    - Thai.
+	    - Traditional Chinese.
+	    - Classical Chinese.
+	    - Arabic.
+	    - Norwegian.
+	    - Swedish.
+	    - Finnish.
 
-	- Help:
+        - Help:
 
-		- Visit the project repository.
-        - Help Documentation.
-        - Check for Updates.
-        - Report Issues.
+                - Visit the project repository.
+		- Help Documentation.
+	- Check for Updates.
+	- Report Issues.
 
 
 <br><br>
@@ -684,7 +684,7 @@ changed, the next time the download is started, the program will automatically r
 temporary files instead of starting over. This mechanism reduces redundant downloads and improves the
 efficiency of resuming download tasks.
 
-### 10. Why do numerous `.vtt` files appear after downloading?
+### 10. Why do numerous .vtt files appear after downloading?
 If subtitles are downloaded along with the current download, the system will generate `.vtt` files. These
 files are not automatically deleted and must be removed manually by the user. Starting with v4.1.0, the
 storage location of these download-related files will be adjusted, and the system will gradually manage
@@ -707,7 +707,7 @@ This application is compiled using Qt Creator, the official integrated developme
 This project is licensed under the [MIT License](LICENSE)
 
 
-<br><br>
+<br><br><br>
 
 
-## For more details, please refer to [HelpDoc TubeFetch](https://rafael-l-m.github.io/TubeFetch/).
+# More details please refer to [HelpDoc](https://rafael-l-m.github.io/TubeFetch/).
