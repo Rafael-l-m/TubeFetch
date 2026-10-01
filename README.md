@@ -2,6 +2,9 @@
 
 <br>
 
+**It is strongly recommended to launch the application twice: once to download the required tools and again to complete the configuration. While the first launch is sufficient to initiate the download, the second launch is required for configuration.**
+
+
 **TubeFetch** is a lightweight download tool for batch downloading YouTube audio and video. Users can add multiple
 download tasks at once and independently select the content, format, and quality for each task. The application
 interface is designed to be lightweight and intuitive, helping users quickly complete batch download operations.
