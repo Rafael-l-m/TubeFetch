@@ -558,7 +558,8 @@ that have already been generated; all data remains unchanged. (On macOS, the loc
 of this option may vary depending on the selected language. If you cannot find 
 `Settings` in the `File` menu, click `TubeFetch` in the menu bar to locate the corresponding option).
         - Language
-	    - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
+	
+            - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
 	    - The following languages are supported:
 	        - British English.
 		- American English.
