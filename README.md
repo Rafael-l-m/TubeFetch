@@ -572,21 +572,36 @@ of this option may vary depending on the selected language. If you cannot find
                 - Spanish.
 		
             - Starting with v4.1.0, support for the following languages will be introduced gradually:
-	        - Portuguese.
-		- French.
-		- Italian.
-		- German.
-		- Russian.
-		- Ukrainian.
-		- Korean.
-		- Japanese.
-		- Thai.
-		- Traditional Chinese.
-		- Classical Chinese.
-		- Arabic.
-		- Norwegian.
-		- Swedish.
-		- Finnish.
+	    
+                - Portuguese.
+	
+                - French.
+		
+                - Italian.
+		
+                - German.
+		
+                - Russian.
+		
+                - Ukrainian.
+		
+                - Korean.
+		
+                - Japanese.
+		
+                - Thai.
+		
+                - Traditional Chinese.
+		
+                - Classical Chinese.
+		
+                - Arabic.
+		
+                - Norwegian.
+		
+                - Swedish.
+		
+                - Finnish.
 	- Help:
 	    - Visit the project repository.
 	    - Help Documentation.
