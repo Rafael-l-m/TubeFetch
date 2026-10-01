@@ -426,7 +426,7 @@ Before running the application, make sure that local port 4416 is available. Thi
 # Usage
 
 1. First Launch Interface:
-        - On the first launch, the system will open the external tools detection page first. For users
+    - On the first launch, the system will open the external tools detection page first. For users
 who downloaded the tools according to the tutorial, the system can automatically detect their
 installation locations and configure the paths. Users who downloaded the tools manually must
 select or enter the actual installation paths of the external tools on this page to ensure that
@@ -442,47 +442,47 @@ system will automatically display a download dialog prompting the user to instal
 components are required dependencies for the application to function properly. If the user
 declines the installation or the download cannot be completed, the system will automatically
 exit the application to ensure the integrity and stability of the runtime environment.
-        - Once the required components have been downloaded, the system will automatically open the
+    - Once the required components have been downloaded, the system will automatically open the
 main interface.
 
 2. Main Interface:
-        - The main interface uses a top-to-bottom sectioned layout. The top section contains two function
+    - The main interface uses a top-to-bottom sectioned layout. The top section contains two function
 buttons for common operations (start download / end download). Below it is the download list,
 which displays the current download tasks and their status in real time. The middle section
 provides a terminal-like interface for displaying system output and execution logs. The bottom section 
 contains two main action buttons for quick access to core functions (add download /
 delete all downloads).
-        - The bottom of the interface provides two action buttons: `Add New Download` and `Remove All Downloads`. 
+    - The bottom of the interface provides two action buttons: `Add New Download` and `Remove All Downloads`. 
 The `Remove All Downloads` button is enabled only when download tasks exist. When the
 download list is empty, the button is automatically disabled to prevent ineffective operations.
 The `Add New Download` button remains enabled at all times, allowing users to open the New
 Download interface and create a new download task at any time.
-   - The terminal-style area displays debugging information, standard output, error messages, warnings, 
+    - The terminal-style area displays debugging information, standard output, error messages, warnings, 
 and general execution logs while the system is running. A green arrow button at the bottom of the 
 area allows users to enter commands for a terminal-like experience. This feature
 has been available since v2 and is currently used primarily to display system output; full command 
 interaction is not yet supported. This module will be further improved in v4.1.0 and will
 gradually support full command interaction. 
-   - The display area shows all current download items in a list. Each download item provides four
+    - The display area shows all current download items in a list. Each download item provides four
 buttons for editing, deleting, starting, and ending the task, respectively. Operations such as
 editing and deleting remain available while a download is in progress. However, once a download 
 has started, any subsequent changes to the task configuration will not affect the download
 currently in progress. In other words, the new configuration displayed in the interface may
 differ from the configuration actually being used for the download. Please keep this in mind.
-   - Of the two buttons at the top of the interface, the `Stop` button is enabled only when the system
+    - Of the two buttons at the top of the interface, the `Stop` button is enabled only when the system
 is in download mode and is used to terminate download tasks currently in progress. Download
 mode is activated when the user clicks `Start` and is divided into two mutually exclusive modes:
-     - Single Download mode: the user must click the download button corresponding to a
+        - Single Download mode: the user must click the download button corresponding to a
 specific download item, and the system will download only that item.
-     - Download All mode: after clicking the download button at the top, the system downloads all download items sequentially.
-     - In Single Download mode, the user can click the `Stop` button for a specific download item.
+        - Download All mode: after clicking the download button at the top, the system downloads all download items sequentially.
+    - In Single Download mode, the user can click the `Stop` button for a specific download item.
 The system will determine whether the task is currently downloading and, if so, stop it immediately. 
 The user can also use the `Stop` button at the top to stop the current download.
 In Download All mode, the system does not support stopping an individual download item. The
 user must use the `Stop` button to stop all download tasks currently in progress.
 
 3. New Download Interface: consists of three main sections: the Link section, the Configuration section, and the Output section.
-        - The Link section is divided into two rows. The first row contains an editable input field
+    - The Link section is divided into two rows. The first row contains an editable input field
 for entering the resource URL, supporting both manual entry and pasting, as well as a
 button for parsing the link information. After approximately three seconds without input,
 the field loses focus. Once focus is lost, the system automatically removes unnecessary
@@ -527,8 +527,8 @@ specific reason. Common causes include a duplicate output path or a conflict wit
 existing record.
 
 4. Menu Bar:
-        - File:
-	        - The `Export Data` feature is used to export all current download items, including task
+    - File:
+        - The `Export Data` feature is used to export all current download items, including task
 configuration, progress status, and other related information, to a file. Users can
 choose `.dat` or `.data` as the output file extension.
         - The `Import Data` feature is used to restore the download task list and its associated
@@ -558,33 +558,33 @@ that have already been generated; all data remains unchanged. (On macOS, the loc
 of this option may vary depending on the selected language. If you cannot find 
 `Settings` in the `File` menu, click `TubeFetch` in the menu bar to locate the corresponding option).
         - Language
-	        - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
-		- The following languages are supported:
-		        - British English.
-			- American English.
-	    - Simplified Chinese.
-	    - Spanish.
-	- Starting with v4.1.0, support for the following languages will be introduced gradually:
-	                - Portuguese.
-			- French.
-	    - Italian.
-	    - German.
-	    - Russian.
-	    - Ukrainian.
-	    - Korean.
-	    - Japanese.
-	    - Thai.
-	    - Traditional Chinese.
-	    - Classical Chinese.
-	    - Arabic.
-	    - Norwegian.
-	    - Swedish.
-	    - Finnish.
+	    - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
+	    - The following languages are supported:
+	        - British English.
+		- American English.
+		- Simplified Chinese.
+		- Spanish.
+	    - Starting with v4.1.0, support for the following languages will be introduced gradually:
+	        - Portuguese.
+		- French.
+		- Italian.
+		- German.
+		- Russian.
+		- Ukrainian.
+		- Korean.
+		- Japanese.
+		- Thai.
+		- Traditional Chinese.
+		- Classical Chinese.
+		- Arabic.
+		- Norwegian.
+		- Swedish.
+		- Finnish.
 	- Help:
-	        - Visit the project repository.
-		- Help Documentation.
-	- Check for Updates.
-	- Report Issues.
+	    - Visit the project repository.
+	    - Help Documentation.
+	    - Check for Updates.
+	    - Report Issues.
 
 
 <br><br>
