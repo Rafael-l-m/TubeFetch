@@ -562,10 +562,14 @@ of this option may vary depending on the selected language. If you cannot find
             - The system supports multiple languages, allowing users to dynamically switch the interface language while the application is running without restarting the application.
 	    
             - The following languages are supported:
-	        - British English.
-		- American English.
-		- Simplified Chinese.
-		- Spanish.
+
+                - British English.
+		
+                - American English.
+		
+                - Simplified Chinese.
+		
+                - Spanish.
 		
             - Starting with v4.1.0, support for the following languages will be introduced gradually:
 	        - Portuguese.
