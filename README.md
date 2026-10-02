@@ -388,8 +388,8 @@ Before running the application, make sure that local port 4416 is available. Thi
 
 ### Windows x86-64 
 
-- Windows 11  -- Tested (x86-64)
-- Windows 10  -- Tested (x86-64)
+- Windows 11  -- Tested
+- Windows 10  -- Tested
 
 <br>
 
