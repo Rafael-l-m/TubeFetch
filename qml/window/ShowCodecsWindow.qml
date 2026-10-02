@@ -46,7 +46,7 @@ ApplicationWindow {
 
                 textFormat: TextEdit.PlainText
 
-                font.family: "Menlo"
+                font.family: "Menlo"  // "Consolas" -> Windows
                 font.pixelSize: 12
                 font.bold: true
 
