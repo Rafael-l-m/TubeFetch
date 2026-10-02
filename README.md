@@ -236,7 +236,7 @@ You can download these tools manually and add them to the system’s PATH enviro
         sudo port install ffmpeg
 ```
 ```bash
-        sudo port install node22
+        sudo port install nodejs22
 ```
 ```bash
         sudo port install npm10
