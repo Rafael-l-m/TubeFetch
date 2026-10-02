@@ -380,8 +380,8 @@ Before running the application, make sure that local port 4416 is available. Thi
 
 - macOS 27 (Golden Gate) -- Tested (aarch64 & x86-64)
 - macOS 26 (Tahoe)  -- Tested (aarch64 & x86-64)
-- macOS 15 (Sequoia)  -- Theoretically Supported
-- macOS 14 (Sonoma)  -- Theoretically Supported
+- macOS 15 (Sequoia)  -- Tested (x86-64)
+- macOS 14 (Sonoma)  -- Tested (x86-64)
 - macOS 13 (Ventura)  -- Tested (x86-64)
 
 <br>
