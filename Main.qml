@@ -13,8 +13,8 @@ ApplicationWindow {
     width: 1000
     height: 960
 
-    minimumWidth: 940
-    minimumHeight: 960
+    // minimumWidth: 940
+    // minimumHeight: 960
 
     maximumWidth: Screen.width
     maximumHeight: Screen.height

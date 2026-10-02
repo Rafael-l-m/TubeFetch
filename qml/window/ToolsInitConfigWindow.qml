@@ -16,10 +16,10 @@ ApplicationWindow {
     width: 950
     height: 450
 
-    minimumWidth: 950
+    // minimumWidth: 950
     maximumWidth: 950
 
-    minimumHeight: 450
+    // minimumHeight: 450
     maximumHeight: 450
 
     title: qsTr("Init Configuration Tools")
