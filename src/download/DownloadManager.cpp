@@ -55,7 +55,7 @@ void DownloadManager::startDownloads() {
 
     if (ifEmpty) { emit downloadAllFinished(); return; }
 
-    QTimer::singleShot(300, this, &DownloadManager::tryStartNextDownload);
+    QTimer::singleShot(10500, this, &DownloadManager::tryStartNextDownload);
 }
 
 void DownloadManager::stopDownloads() {

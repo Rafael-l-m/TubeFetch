@@ -8,7 +8,7 @@ class ProcessPool final : public QObject {
     Q_OBJECT
 
 public:
-    explicit ProcessPool(int maxProcessesPermited = 3, QObject* parent = nullptr);
+    explicit ProcessPool(int maxProcessesPermited = 1, QObject* parent = nullptr);
 
     QProcess* acquire();
     void release(QProcess* process);
