@@ -2,6 +2,10 @@
 
 <br>
 
+Error Occurred: releases v3.0.0 downloaded before 2026-10-07. Please reinstall v3.0.0
+
+<br>
+
 **It is strongly recommended to launch the application twice: once to download the required tools and again to complete the configuration. While the first launch is sufficient to initiate the download, the second launch is required for configuration.**
 
 
