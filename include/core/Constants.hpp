@@ -5,7 +5,7 @@
 #include <QUrl>
 
 namespace DOWNLOAD {
-    inline const int TIME_WAIT_MIN {7500};
+    inline const int TIME_WAIT_MIN {9500};
     inline const int TIME_WAIT_MAX {20500};
     inline const int RATE_MIN {200};
     inline const int RATE_MAX {550};

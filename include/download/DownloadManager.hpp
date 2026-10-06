@@ -8,7 +8,7 @@ class DownloadManager final : public QObject {
     Q_OBJECT
 
 public:
-    explicit DownloadManager(int maxConcurrent = 1, QObject* parent = nullptr);
+    explicit DownloadManager(int maxConcurrent = 2, QObject* parent = nullptr);
 
     void addDownload(const QSharedPointer<Download>& dt);
     void setDownloads(const QList<QSharedPointer<Download>>& dl);
