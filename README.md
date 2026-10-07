@@ -2,7 +2,7 @@
 
 <br>
 
-# Error Occurred: releases v3.0.0 downloaded before 2026-10-07. Please reinstall v3.0.0
+# **Error: If you are using v3.0.0 and installed it before October 7, please uninstall it and reinstall the latest version.**
 
 <br>
 
