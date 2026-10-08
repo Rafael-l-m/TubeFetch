@@ -2,7 +2,7 @@
 
 <br>
 
-# **Error: If you are using v3.0.0 and installed it before October 7, 2026, please uninstall it and reinstall the latest version.**
+# **Error: If you are using v3.0.0 and installed it before October 7, 2026, please uninstall it and reinstall the version v2.1.0.**
 
 <br>
 
