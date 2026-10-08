@@ -2,7 +2,14 @@
 
 <br>
 
-# **Error: If you are using v3.0.0 and installed it before October 7, 2026, please uninstall it and reinstall the version v2.1.0.**
+# **Error: If you are using v3.0.0, please uninstall it and reinstall the version v2.1.0.**
+
+# **The global download button causes an issue that prevents downloads from being resumed. In v3.0.0, only the individual download option is currently working properly.**
+
+# **If you want to use automatic downloads globally, please roll back to v2.1.0.**
+
+# **v3.0.0 will be temporarily unpublished.**
+
 
 <br>
 
